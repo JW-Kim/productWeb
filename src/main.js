@@ -1,11 +1,11 @@
-import scss from './stylesheets/app.scss'
+import scss from './assets/stylesheets/app.scss'
 
 import Vue from 'vue'
 import Resource from 'vue-resource'
 import Router from 'vue-router'
 
 import App from './components/App.vue'
-import Home from './components/Home.vue'
+import Home from './components/home/Home.vue'
 import About from './components/About.vue'
 import Quote from './components/Quote.vue'
 

@@ -6,7 +6,9 @@ import Router from 'vue-router'
 
 import App from './components/App.vue'
 import Home from './components/home/Home.vue'
-import About from './components/About.vue'
+import Portfolio from './components/portfolio/Portfolio.vue'
+import Contact from './components/contact/Contact.vue'
+import Shop from './components/shop/Shop.vue'
 import Quote from './components/Quote.vue'
 
 // Install plugins
@@ -21,9 +23,19 @@ let routes = [
     component: Home
   },
   {
-    path: '/about',
-    name: 'about',
-    component: About
+    path: '/portfolio',
+    name: 'portfolio',
+    component: Portfolio
+  },
+  {
+      path: '/contact',
+      name: 'contact',
+      component: Contact
+  },
+  {
+      path: '/shop',
+      name: 'shop',
+      component: Shop
   },
   {
     path: '/quote',

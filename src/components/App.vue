@@ -1,5 +1,4 @@
 <script>
-    import Navbar from './Navbar.vue'
     import CpHeader from "./CpHeader.vue";
     import CpFooter from "./CpFooter.vue";
 
@@ -8,8 +7,7 @@
 
         components: {
             CpFooter,
-            CpHeader,
-            Navbar
+            CpHeader
         }
     }
 </script>

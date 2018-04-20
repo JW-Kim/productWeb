@@ -41,7 +41,7 @@
             </div>
             <div class="cell cell-middle textcenter">
                 <div id="logo"><h1><a href="http://liviucerchez.com/cross/" rel="home"><img
-                        src="/images/logo1.png" width="105"
+                        src="/images/logo1.png" width="250"
                         height="106" alt="Cross"></a></h1></div>
             </div>
             <div class="cell cell-right textright">

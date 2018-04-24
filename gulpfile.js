@@ -28,6 +28,11 @@ gulp.task('build.index', function(){
         .pipe(gulp.dest('./dist'));
 });
 
+gulp.task('lib', function () {
+    return gulp.src('./src/lib/*')
+        .pipe(gulp.dest('./dist/lib'))
+})
+
 gulp.task('images', function () {
     return gulp.src('./src/assets/images/*')
         .pipe(gulp.dest('./dist/images'))
@@ -37,4 +42,4 @@ gulp.task('images', function () {
 gulp.watch('src/**', ['build.index']);
 
 // Default task
-gulp.task('default', ['webpack', 'images', 'webserver', 'build.index']);
+gulp.task('default', ['webpack', 'images', 'lib', 'webserver', 'build.index']);

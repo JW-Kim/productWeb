@@ -1,8 +1,5 @@
 <template>
-    <div id="menu" v-bind:class="{collapse : menuOpenYn}"
-         @mouseover="openMenu"
-         @mouseleave="closeMenu"
-    >
+    <div id="menu" v-bind:class="{collapse : menuOpenYn}">
         <nav>
             <ul @click="closeMenu">
                 <li id="menu-item-1308"

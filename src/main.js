@@ -10,6 +10,7 @@ import Portfolio from './components/portfolio/Portfolio.vue'
 import Contact from './components/contact/Contact.vue'
 import Shop from './components/shop/Shop.vue'
 import Quote from './components/Quote.vue'
+import NoteStatics from './components/note/statics/NoteStatics.vue'
 
 // Install plugins
 Vue.use(Router)
@@ -42,7 +43,12 @@ let routes = [
     name: 'quote',
     component: Quote
   },
-  { path: '*', redirect: '/home' }
+    {
+        path: '/noteStatics',
+        name: 'noteStatics',
+        component: NoteStatics
+    }
+
 ]
 
 // Set up a new router

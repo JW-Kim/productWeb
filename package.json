@@ -54,8 +54,11 @@
     "webpack-stream": "^2.3.0"
   },
   "dependencies": {
+    "chart.js": "^2.7.3",
     "foundation-sites": "^6.0.6",
     "vue": "^2.1.10",
+    "vue-chartjs": "^3.4.0",
+    "vue-easy-slider": "^5.2.7",
     "vue-resource": "^1.0.3",
     "vue-router": "^2.1.1"
   }

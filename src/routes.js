@@ -1,11 +1,19 @@
-import React from 'react';
-import { Route, Switch } from 'react-router-dom';
-import FilterableTable from './containers/FilterableTable';
-import About from './components/About';
+import React, {Component} from 'react';
+import { Redirect, Switch, Route } from 'react-router-dom';
+import Login from './components/login/Login';
 
-export default (
-	<Switch>
-		<Route exact path="/" component={FilterableTable} />
-		<Route path="/about" component={About} />
-	</Switch>
-);
+class Routes extends Component {
+    render() {
+        const authenticated = true;
+        return (
+        	<React.Fragment>
+				{authenticated && <Redirect push={true} to={"/login"}/>}
+				<Switch>
+					<Route path="/login" component={Login} {...this.props} />
+				</Switch>
+			</React.Fragment>
+        );
+    }
+}
+
+export default Routes;

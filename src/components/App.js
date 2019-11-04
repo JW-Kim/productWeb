@@ -1,16 +1,38 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { footer } from '../assets/styles/footer.scss';
-import Routes from '../routes';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { Switch, Route, Redirect } from 'react-router-dom';
+import Cookies from 'js-cookie';
+import Login from './login/Login';
+import Note from './note/Note';
+import Gnb from './frame/Gnb';
+import _ from 'lodash';
 
-const App = () =>
-    <div>
-        <h1>Filter table</h1>
-        { Routes }
-        <footer className={footer}>
-            <Link to="/">Filterable Table</Link>
-            <Link to="/about">About</Link>
-        </footer>
-    </div>;
+class App extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {};
+    }
+
+    render() {
+        let cookiesYn = false;
+        if(!_.isNil(Cookies.get('token'))) {
+            cookiesYn = true;
+        }
+        return(
+            <div>
+                {!cookiesYn && <Redirect to={{pathname: '/login'}}/>}
+                {cookiesYn && <Gnb /> }
+                <Switch>
+                    <Route path="/login"><Login/></Route>
+                    <Route path="/note"><Note/></Route>
+                </Switch>
+            </div>
+        );
+    }
+}
+
+App.propTypes = {
+    match: PropTypes.object
+};
 
 export default App;

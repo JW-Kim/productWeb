@@ -1,5 +1,8 @@
 import React, {Component} from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import {NoteRest} from '../../apis/index';
+import {note as noteActions} from '../../redux/actions/index';
 
 class Note extends Component {
     constructor(props) {
@@ -7,8 +10,10 @@ class Note extends Component {
         this.state = {};
     }
 
-    componentDidMount() {
-        NoteRest.getNote();
+    async componentDidMount() {
+        const {setNotes} = this.props;
+        const res = await NoteRest.getNote();
+        setNotes(res.data.data);
     }
 
     render() {
@@ -18,4 +23,20 @@ class Note extends Component {
     }
 }
 
-export default Note;
+Note.propTypes = {
+    notes: PropTypes.object,
+    setNotes: PropTypes.func
+};
+
+const mapStateToProps = (state) => ({
+    notes: state.note.notes
+});
+
+const mapDispatchToProps = {
+    setNotes: noteActions.setNotes
+};
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Note);

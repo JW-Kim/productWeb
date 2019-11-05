@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { Redirect } from 'react-router-dom';
 import Cookies from 'js-cookie';
+import {Row, Col} from 'react-bootstrap';
 
 class Gnb extends Component {
     constructor(props) {
@@ -18,10 +19,13 @@ class Gnb extends Component {
     render() {
         const {logoutYn} = this.state;
         return (
-            <div>Gnb
-                <input type="button" value="logout" onClick={this.onLogout}/>
+            <React.Fragment>
+                <Row>
+                    <Col xs={9}>Gnb</Col>
+                    <Col xs={3}><input type="button" value="logout" onClick={this.onLogout}/></Col>
+                </Row>
                 {logoutYn && <Redirect to={{pathname: '/login'}} />}
-            </div>
+            </React.Fragment>
         );
     }
 }

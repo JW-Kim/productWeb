@@ -7,7 +7,6 @@ import {AxiosProvider} from 'react-axios';
 import {axiosInstance} from '../modules/index';
 
 import App from '../components/App';
-import DevTools from './DevTools';
 
 export default function Root({store, history}) {
     return (
@@ -17,7 +16,6 @@ export default function Root({store, history}) {
                     <ConnectedRouter history={history}>
                         <Route path="/" component={App}/>
                     </ConnectedRouter>
-                    <DevTools />
                 </div>
             </AxiosProvider>
         </Provider>

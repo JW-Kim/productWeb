@@ -5,6 +5,7 @@ import Cookies from 'js-cookie';
 import Login from './login/Login';
 import Note from './note/Note';
 import Gnb from './frame/Gnb';
+import Toast from '../components/com/Toast';
 import _ from 'lodash';
 
 class App extends Component {
@@ -26,6 +27,7 @@ class App extends Component {
                     <Route path="/login"><Login/></Route>
                     <Route path="/note"><Note/></Route>
                 </Switch>
+                <Toast/>
             </div>
         );
     }

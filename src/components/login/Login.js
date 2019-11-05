@@ -27,6 +27,7 @@ class Login extends Component {
     }
 
     onChangeUsername = username => {
+        const {isPassword} = this.state;
         let isUsername = true;
         const reg = /^[.A-Za-z0-9]*$/;
 
@@ -34,10 +35,18 @@ class Login extends Component {
             isUsername = false;
         }
 
-        this.setState({username, isUsername});
+        let loginBtnStyle = {};
+        if (isUsername && isPassword) {
+            loginBtnStyle = {backgroundColor: '#142765'};
+        } else {
+            loginBtnStyle = {backgroundColor: '#C2D8E9'};
+        }
+
+        this.setState({username, isUsername, loginBtnStyle});
     }
 
     onChangePassword = password => {
+        const {isUsername} = this.state;
         let isPassword = true;
         const reg = /^[가-힣]+$/;
 
@@ -45,7 +54,14 @@ class Login extends Component {
             isPassword = false;
         }
 
-        this.setState({password, isPassword});
+        let loginBtnStyle = {};
+        if (isUsername && isPassword) {
+            loginBtnStyle = {backgroundColor: '#142765'};
+        } else {
+            loginBtnStyle = {backgroundColor: '#C2D8E9'};
+        }
+
+        this.setState({password, isPassword, loginBtnStyle});
     }
 
     async onClick() {
@@ -72,7 +88,7 @@ class Login extends Component {
     }
 
     render() {
-        const {username, password, redirectYn, isUsername, isPassword} = this.state;
+        const {username, password, redirectYn, isUsername, isPassword, loginBtnStyle} = this.state;
         return (
             <Container className={login}>
                 <Row className={image}>
@@ -107,7 +123,7 @@ class Login extends Component {
                     </Row>
                 )}
                 <Row>
-                    <Col><Button className={loginBtn} onClick={this.onClick}>로그인</Button></Col>
+                    <Col><Button className={loginBtn} style={loginBtnStyle} onClick={this.onClick}>로그인</Button></Col>
                 </Row>
                 <Row className={signUp}>
                     <Col><a href="">회원가입</a></Col>

@@ -35,7 +35,7 @@
   margin-top: 10px;
 }
 
-.loginBtn:hover, .loginBtn:active, .loginBtn:visited, loginBtn:focus {
+.loginBtn:hover, .loginBtn:active, .loginBtn:visited, .loginBtn:focus, .loginBtn:not(:disabled):not(.disabled):active {
   background-color: #C2D8E9;
   border: 1px solid #C2D8E9;
   color: #fff;

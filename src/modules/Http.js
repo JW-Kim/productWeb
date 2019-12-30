@@ -3,12 +3,29 @@ import Cookies from 'js-cookie';
 
 const reqInterceptorOnSuccess = config => {
     const configAddedToken = config;
-    console.log('token', Cookies.get('token'));
     configAddedToken.headers.Authorization = `Bearer ${Cookies.get('token')}`;
     return configAddedToken;
 };
 
-axios.interceptors.request.use(reqInterceptorOnSuccess);
+const regInterceptorOnError = () => {};
+
+const resInterceptorOnSuccess = success => {
+    return success;
+};
+
+const resInterceptorOnError = (error) => {
+    const {response} = error;
+
+    if(response.status === 403) {
+        Cookies.remove('token');
+        console.log(window.location);
+        window.location.href = `${window.location.origin}/login`;
+    }
+    return error;
+};
+
+axios.interceptors.request.use(reqInterceptorOnSuccess, regInterceptorOnError);
+axios.interceptors.response.use(resInterceptorOnSuccess, resInterceptorOnError);
 
 class $http {
     constructor() {

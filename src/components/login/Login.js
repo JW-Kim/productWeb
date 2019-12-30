@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import Cookies from 'js-cookie';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import {LoginRest} from '../../apis/index';
@@ -110,7 +110,7 @@ class Login extends Component {
                 )}
                 <Row className={inputRow}>
                     <Col>
-                        <input className="password" type="text" value={password} onChange={e => this.onChangePassword(e.target.value)} placeholder="비밀번호"/>
+                        <input className="password" type="password" value={password} onChange={e => this.onChangePassword(e.target.value)} placeholder="비밀번호"/>
                         {password !== '' && <span className="material-icons" onClick={() => this.onChangePassword('')}>clear</span>}
                     </Col>
                 </Row>
@@ -126,7 +126,7 @@ class Login extends Component {
                     <Col><Button className={loginBtn} style={loginBtnStyle} onClick={this.onClick}>로그인</Button></Col>
                 </Row>
                 <Row className={signUp}>
-                    <Col><a href="">회원가입</a></Col>
+                    <Col><Link to="/user_register/create"><span>회원가입</span></Link></Col>
                 </Row>
                 {redirectYn && <Redirect to={{pathname: '/note'}}/>}
             </Container>

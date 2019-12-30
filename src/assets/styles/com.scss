@@ -8,3 +8,80 @@
     font-size: 13px;
   }
 }
+
+.inputRow {
+  height: 100%;
+  margin-top: 10px;
+}
+
+.loginBtn {
+  width: 100%;
+  height: 60px;
+  background-color: #C2D8E9;
+  border: 1px solid #C2D8E9;
+  color: #fff;
+  margin-bottom:15px;
+  margin-top: 10px;
+}
+
+.loginBtn:hover, .loginBtn:active, .loginBtn:visited, .loginBtn:focus, .loginBtn:not(:disabled):not(.disabled):active {
+  background-color: #C2D8E9;
+  border: 1px solid #C2D8E9;
+  color: #fff;
+}
+
+.editRow {
+  input {
+    width: 100%;
+    height: 60px;
+    padding-left:10px;
+    padding-right:30px;
+    border: 1px solid #C2D8E9;
+  }
+
+  span {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+  }
+}
+
+.inputRowTitle {
+  line-height: 60px;
+}
+
+.modalTitle {
+  text-align: center;
+}
+
+.modalHeader {
+  background-color: #C2D8E9;
+  height: 60px;
+  line-height: 60px;
+  > div > span {
+    margin-top: 17px;
+    margin-left: 5px;
+  }
+}
+
+.myModal {
+  margin: 0px;
+
+}
+
+.myModal > div {
+  width: 100VW;
+  height: 100VH;
+  border: 0px;
+}
+
+.myModal > div > div {
+  padding: 0px;
+}
+
+.row {
+  height: 60px;
+  line-height: 60px;
+  padding-left: 5px;
+  border-bottom: 1px solid #C2D8E9;
+}

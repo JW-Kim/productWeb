@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {Row, Col} from 'react-bootstrap';
+import {Row, Col, Button} from 'react-bootstrap';
 
 import { modalTitle, modalHeader } from '../../assets/styles/com.scss';
 
@@ -15,13 +15,33 @@ class ModalHeader extends Component {
         close();
     }
 
+    onSave = () => {
+        const {save} = this.props;
+        save();
+    }
+
     render() {
-        const {title} = this.props;
+        const {title, type} = this.props;
         return (
             <Row className={modalHeader}>
                 <Col xs={3}><span className="material-icons" onClick={() => this.onClose()}>clear</span></Col>
                 <Col xs={6} className={modalTitle}>{title}</Col>
-                <Col xs={3} />
+                {type === 'BOTH' && (
+                    <Col xs={3}>
+                        <Button
+                            onClick={() => this.onSave()}
+                            style={{
+                                marginRight: '10px',
+                                fontsize: '18px',
+                                borderColor: '#C2D8E9',
+                                backgroundColor: '#C2D8E9',
+                                color: '#000'
+                            }}>저장</Button>
+                    </Col>
+                )}
+                {type === 'LEFT' && (
+                    <Col xs={3} />
+                )}
             </Row>
         );
     }
@@ -29,7 +49,10 @@ class ModalHeader extends Component {
 
 ModalHeader.propTypes = {
     title: PropTypes.string,
-    close: PropTypes.func
+    close: PropTypes.func,
+    btnMsg: PropTypes.string,
+    type: PropTypes.string,
+    save: PropTypes.func
 };
 
 export default ModalHeader;

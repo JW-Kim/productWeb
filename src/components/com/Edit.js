@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import {Row, Col} from 'react-bootstrap';
 
 import { editRow, warningRow } from '../../assets/styles/com.scss';
 import { chkNum, chkEng, chkKor, chkSpecialStr } from '../com/ReqExp';
@@ -64,19 +63,19 @@ class Edit extends Component {
 
         return (
             <React.Fragment>
-                <Row className={editRow}>
-                    <Col>
+                <div className={editRow}>
+                    <div>
                         <input type={type} value={text} onChange={e => this.onChangeText(e.target.value)} placeholder={placeholder}/>
                         {text !== '' && <span className="material-icons" onClick={() => this.onChangeText('')}>clear</span>}
-                    </Col>
-                </Row>
-                {!isText && !_.isNil(isText) && (
-                    <Row className={warningRow} style={{paddingLeft: '5px'}}>
-                        <Col>
+                    </div>
+                </div>
+                {!isText && !_.isNil(isText) && warningText !== '' && !_.isNil(warningText) && (
+                    <div className={warningRow} style={{paddingLeft: '5px'}}>
+                        <div>
                             <span className="material-icons">error</span>
                             <span>{warningText}</span>
-                        </Col>
-                    </Row>
+                        </div>
+                    </div>
                 )}
             </React.Fragment>
         );

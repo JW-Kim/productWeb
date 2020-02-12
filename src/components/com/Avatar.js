@@ -36,6 +36,7 @@ class Avatar extends Component {
         return (
             <React.Fragment>
                 {!_.isNil(url) && shape === 'roundedCircle' && <Image src={url} style={style} roundedCircle />}
+                {_.isNil(url) && shape === 'roundedCircle' && <span className="material-icons" style={style}>person</span>}
                 {!_.isNil(url) && shape === 'thumbnail' && <Image src={url} style={style} thumbnail />}
             </React.Fragment>
         );

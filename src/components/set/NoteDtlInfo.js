@@ -2,9 +2,13 @@ import React, { Component } from 'react';
 import {Col, Row, Dropdown} from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import DatePicker from 'react-day-picker/DayPickerInput';
+import {DateUtils} from 'react-day-picker';
+import dateFnsFormat from 'date-fns/format';
+import dateFnsParse from 'date-fns/parse';
 
-import {noteInfo, noteInfoContent} from '../../assets/styles/set.scss';
-import {inputRowTitle} from '../../assets/styles/com.scss';
+import {noteInfo, noteInfoContent, calendarContent} from '../../assets/styles/set.scss';
+import {inputRowTitle, modalSubTitle} from '../../assets/styles/com.scss';
 import Edit from '../com/Edit';
 
 class NoteDtlInfo extends Component {
@@ -24,13 +28,31 @@ class NoteDtlInfo extends Component {
         setSex(sex, true);
     }
 
+    onDayClick = (birthDt) => {
+        console.log('onDayClick', birthDt);
+        const {setBirthDt} = this.props;
+        setBirthDt(birthDt, true);
+    }
+
+    parseDate = (str, format, locale) => {
+        const parsed = dateFnsParse(str, format, new Date(), {locale});
+        if(DateUtils.isDate(parsed)) {
+            return parsed;
+        }
+        return undefined;
+    }
+
+    formatDate = (date, format, locale) => {
+        return dateFnsFormat(date, format, {locale});
+    }
+
     render() {
-        const {noteNm, sex} = this.props;
+        const {noteNm, sex, birthDt} = this.props;
 
         return (
             <WrapperStyled>
             <div className={noteInfo}>
-                <Row><Col>노트 정보</Col></Row>
+                <Row><Col className={modalSubTitle}>노트 정보</Col></Row>
                 <Row className={noteInfoContent}>
                     <Col className={inputRowTitle} xs={4}>노트 이름</Col>
                     <Col xs={8}>
@@ -61,7 +83,15 @@ class NoteDtlInfo extends Component {
                 </Row>
                 <Row className={noteInfoContent}>
                     <Col className={inputRowTitle} xs={4}>출생일</Col>
-                    <Col xs={8} />
+                    <Col xs={8} className={calendarContent}>
+                        <DatePicker
+                            formatDate={(date, format, loclae) => this.formatDate(date, format, loclae)}
+                            parseDate={(str, format, locale) => this.parseDate(str, format, locale)}
+                            selectedDays={new Date(birthDt)}
+                            format="yyyy-MM-dd"
+                            placeholder={`${dateFnsFormat(new Date(), 'yyyy-MM-dd')}`}
+                            onDayChange={this.onDayClick}/>
+                    </Col>
                 </Row>
             </div>
             </WrapperStyled>
@@ -78,6 +108,7 @@ const WrapperStyled = styled.div`
             color: #212529;
             width: 100%;
             height: 60px;
+            font-size: 14px;
         }
     }   
     
@@ -94,8 +125,10 @@ const WrapperStyled = styled.div`
 NoteDtlInfo.propTypes = {
     noteNm: PropTypes.string,
     sex: PropTypes.string,
+    birthDt: PropTypes.string,
     setNoteNm: PropTypes.func,
-    setSex: PropTypes.func
+    setSex: PropTypes.func,
+    setBirthDt: PropTypes.func
 };
 
 export default NoteDtlInfo;

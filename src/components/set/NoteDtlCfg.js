@@ -19,6 +19,16 @@ class NoteDtlCfg extends Component {
         this.getNoteCfg();
     }
 
+    componentWillReceiveProps(nextProps) {
+        const {openYn} = this.props;
+
+        if(!openYn && nextProps.openYn) {
+            this.setState({
+                noteCfgList: []
+            }, () => {this.getNoteCfg();});
+        }
+    }
+
     async getNoteCfg() {
         const {type, noteId, setNoteCfgList} = this.props;
 
@@ -67,7 +77,7 @@ class NoteDtlCfg extends Component {
                 <Accordion defaultActiveKey="1">
                     <Card>
                         <Accordion.Toggle as={Card.Header} eventKey="0">
-                            노트 설정
+                            노트 설정<span className="material-icons">expand_more</span>
                         </Accordion.Toggle>
                         <Accordion.Collapse eventKey="0">
                             <Card.Body>
@@ -91,13 +101,27 @@ const WrapperStyled = styled.div`
         padding: .75rem 10px;
         background-color: #fff;
         border: 0px;
+        font-size: 18px;
+        
+        span {
+            float: right;
+        }
+    }
+    .card-body > div {
+        margin-left: 10px;
+        margin-right: 10px;
+        font-size: 14px;
+    }
+    .btn-group {
+        width: 100%;
     }
 }`;
 
 NoteDtlCfg.propTypes = {
     setNoteCfgList: PropTypes.func,
     type: PropTypes.string,
-    noteId: PropTypes.string
+    noteId: PropTypes.string,
+    openYn: PropTypes.bool
 };
 
 export default NoteDtlCfg;

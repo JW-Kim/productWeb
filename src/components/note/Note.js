@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {Accordion, Col, Row} from 'react-bootstrap';
 import styled from 'styled-components';
+import _ from 'lodash';
 
 import {NoteRest} from '../../apis/index';
 import {note as noteActions} from '../../redux/actions/index';
@@ -11,6 +12,7 @@ import NoteCalendar from './NoteCalendar';
 import NoteDiary from './NoteDiary';
 import NoteDisease from './NoteDisease';
 import NoteDtl from '../set/NoteDtl';
+import NoteEventBtn from './NoteEventBtn';
 import {noteEmpty, noteEmptyIcon} from '../../assets/styles/note.scss';
 
 class Note extends Component {
@@ -20,7 +22,8 @@ class Note extends Component {
             isNoteEmpty: true,
             noteDiv: {
                 overflowY: 'scroll',
-                noteDtlYn: false
+                noteDtlYn: false,
+                displayYn: false
             }
         };
     }
@@ -38,12 +41,20 @@ class Note extends Component {
         });
     }
 
+    componentWillReceiveProps(nextProps) {
+        if (_.isNil(nextProps.diaryDt) || nextProps.diaryDt === '') {
+            this.setState({displayYn: false});
+        } else {
+            this.setState({displayYn: true});
+        }
+    }
+
     onOpenNoteDtl = () => {
         this.setState({noteDtlYn: true});
     }
 
     render() {
-        const {noteDiv, isNoteEmpty, noteDtlYn} = this.state;
+        const {noteDiv, isNoteEmpty, noteDtlYn, displayYn} = this.state;
         return (
             <WrapperStyled>
                 {isNoteEmpty && (
@@ -61,10 +72,11 @@ class Note extends Component {
                             <NoteDiary />
                             <NoteDisease />
                         </Accordion>
+                        <NoteEventBtn displayYn={displayYn}/>
                     </div>
                 </div>
                 )}
-                <NoteDtl openYn={noteDtlYn} type="create" close={() => this.setState({noteDtlYn: false})} />
+                <NoteDtl openYn={noteDtlYn} type="CREATE" close={() => this.setState({noteDtlYn: false})} />
             </WrapperStyled>
         );
     }
@@ -80,11 +92,13 @@ const WrapperStyled = styled.div`
 
 Note.propTypes = {
     notes: PropTypes.object,
-    setNotes: PropTypes.func
+    setNotes: PropTypes.func,
+    diaryDt: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({
-    notes: state.note.notes
+    notes: state.note.notes,
+    diaryDt: state.note.diaryDt
 });
 
 const mapDispatchToProps = {

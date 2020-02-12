@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {ButtonGroup, Row, Col, Button} from 'react-bootstrap';
-
+import styled from 'styled-components';
 
 class NoteDtlCfgBtnGroup extends Component {
     constructor(props) {
@@ -65,6 +65,7 @@ class NoteDtlCfgBtnGroup extends Component {
         const {useStyle, unUseStyle} = this.state;
 
         return (
+            <WrapperStyled>
             <Row>
                 <Col xs={4}>{title}</Col>
                 <Col xs={8}>
@@ -74,9 +75,26 @@ class NoteDtlCfgBtnGroup extends Component {
                     </ButtonGroup>
                 </Col>
             </Row>
+            </WrapperStyled>
         );
     }
 }
+
+const WrapperStyled = styled.div`
+  &&& {
+    button {
+        font-size: 14px;
+    }
+    
+    .btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:not(:disabled):not(.disabled):active:focus, .show>.btn-primary.dropdown-toggle:focus {
+        box-shadow: 0 0 0 0.2rem rgba(255,255,255,.5);
+    } 
+    
+    .btn-primary.focus, .btn-primary:focus {
+        box-shadow: 0 0 0 0.2rem rgba(255,255,255,.5);
+    }
+}`;
+
 
 NoteDtlCfgBtnGroup.propTypes = {
     title: PropTypes.string,

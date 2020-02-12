@@ -25,7 +25,7 @@ class Note extends Component {
             <div>
                 <Modal show={openYn} dialogClassName={myModal}>
                     <Modal.Body>
-                        <ModalHeader title="일기장" close={() => this.onClose()}/>
+                        <ModalHeader title="일기장" type="LEFT" close={() => this.onClose()}/>
                     </Modal.Body>
                 </Modal>
                 {logoutYn && <Redirect to={{pathname: '/login'}} />}

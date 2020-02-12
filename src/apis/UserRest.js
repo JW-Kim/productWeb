@@ -10,6 +10,10 @@ class UserRest {
     static selectUserExist(params) {
         return $http.get(`${prefix}/selectUserExist`, {params});
     }
+
+    static selectUserList(params) {
+        return $http.get(`${prefix}/search`, {params});
+    }
 }
 
 export default UserRest;

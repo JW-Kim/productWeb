@@ -33,7 +33,7 @@ class Set extends Component {
             <div>
                 <Modal show={openYn} dialogClassName={myModal}>
                     <Modal.Body>
-                        <ModalHeader title="설정" close={() => this.onClose()}/>
+                        <ModalHeader title="설정" type="LEFT" close={() => this.onClose()}/>
                         <Row className={row}>
                             <Col>사용자 정보</Col>
                         </Row>

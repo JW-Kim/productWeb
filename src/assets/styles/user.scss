@@ -1,0 +1,25 @@
+.searchUserRow {
+  > span {
+    float: left;
+    line-height: 60px;
+  }
+
+  > span:nth-child(1) {
+    font-size: 24px;
+  }
+
+  > span:nth-child(2) {
+    font-size: 20px;
+    margin-left: 20px;
+  }
+
+  input {
+    background-color: #C2D8E9;
+  }
+
+  .searchUserListRow {
+    > div {
+      height: 60px;
+    }
+  }
+}

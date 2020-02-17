@@ -18,6 +18,10 @@ class DiaryRest {
     static getDisease(diseaseId) {
         return $http.get(`${prefix}/disease/${diseaseId}`);
     }
+
+    static createDiary(params) {
+        return $http.post(`${prefix}`, params);
+    }
 }
 
 export default DiaryRest;

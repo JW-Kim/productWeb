@@ -23,7 +23,7 @@ class Edit extends Component {
 
     componentWillReceiveProps(nextProps) {
         const {textVal} = this.props;
-        if(!_.isNil(textVal) && textVal !== nextProps.textVal) {
+        if(_.isNil(textVal) && textVal !== nextProps.textVal) {
             this.setState({text: textVal});
         }
     }

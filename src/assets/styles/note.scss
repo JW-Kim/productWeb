@@ -13,7 +13,22 @@
   text-align: center;
 }
 
-.noteDtlInputRow {
-  display: inline-block;
-  width: 70%;
+.noteDtlInputIntRow  {
+  > div {
+    display: inline-block;
+  }
+  > span {
+    padding-left: 10px;
+    vertical-align: bottom;
+  }
+}
+
+.noteDtlInputDecRow {
+  > div {
+    display: inline-block;
+  }
+  > span {
+    padding-left: 10px;
+    vertical-align: bottom;
+  }
 }

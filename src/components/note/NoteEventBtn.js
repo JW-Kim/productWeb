@@ -8,6 +8,7 @@ import onClickOutside from 'react-onclickoutside';
 
 import {openPop} from '../com/ModalSvc';
 import NoteDiaryDtl from '../note/NoteDairyDtl';
+import {note as noteActions} from '../../redux/actions/index';
 
 class NoteEventBtn extends Component {
     constructor(props) {
@@ -31,9 +32,14 @@ class NoteEventBtn extends Component {
     }
 
     openNoteDiaryDtl = () => {
+        const {noteId, diaryDt, setDiaryMonth, diaryMonth, setDiaries, setDiaryDt} = this.props;
         this.setState({openYn: false});
-        openPop(<NoteDiaryDtl />).then(() => {
-
+        openPop(<NoteDiaryDtl type="CREATE" noteId={noteId} diaryDt={diaryDt}/>).then(() => {
+            const month = diaryMonth;
+            setDiaryMonth(null);
+            setDiaryMonth(month);
+            setDiaries(null);
+            setDiaryDt(null);
         });
     }
 
@@ -68,7 +74,7 @@ class NoteEventBtn extends Component {
                                 <span id="createDisease" className="material-icons">create</span>
                             </OverlayTrigger>
                     )}
-                    {openYn && displayYn && (
+                    {openYn && displayYn  && (
                             <span id="clear" className="material-icons" onClick={() => this.setState({openYn: false})}>clear</span>
 
                     )}
@@ -115,17 +121,31 @@ const WrapperStyled = styled.div`
 
 NoteEventBtn.propTypes = {
     displayYn: PropTypes.string,
-    diary: PropTypes.object
+    diary: PropTypes.object,
+    noteId: PropTypes.string,
+    diaryDt: PropTypes.string,
+    diaryMonth: PropTypes.string,
+    setDiaryMonth: PropTypes.func,
+    setDiaries: PropTypes.func,
+    setDiaryDt: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
-    diary: state.note.diary
+    diary: state.note.diary,
+    noteId: state.note.noteId,
+    diaryDt: state.note.diaryDt,
+    diaryMonth: state.note.diaryMonth
 });
 
+const mapDispatchToProps = {
+    setDiaryMonth: noteActions.setDiaryMonth,
+    setDiaries: noteActions.setDiaries,
+    setDiaryDt: noteActions.setDiaryDt,
+};
 
 export default connect(
     mapStateToProps,
-    null
+    mapDispatchToProps
 )(onClickOutside(NoteEventBtn));
 
 

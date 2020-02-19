@@ -31,6 +31,32 @@ class NoteDiaryDtlShit extends Component {
         }
     }
 
+    componentWillReceiveProps(nextProps) {
+        const {shitCd} = this.props;
+        if (!_.isNil(nextProps.shitCd) && shitCd !== nextProps.shitCd) {
+            if (nextProps.shitCd === 'good') {
+                this.setState({
+                    goodStyle: {backgroundColor: '#4caf50', borderColor: '#fff'},
+                    notBadStyle: {backgroundColor: '#fff', borderColor: '#f9a825'},
+                    badStyle: {backgroundColor: '#fff', borderColor: '#d32f2f'}
+                });
+            } else if(nextProps.shitCd === 'notBad') {
+                this.setState({
+                    goodStyle: {backgroundColor: '#fff', borderColor: '#4caf50'},
+                    notBadStyle: {backgroundColor: '#f9a825', borderColor: '#fff'},
+                    badStyle: {backgroundColor: '#fff', borderColor: '#d32f2f'}
+                });
+            } else {
+                this.setState({
+                    goodStyle: {backgroundColor: '#fff', borderColor: '#4caf50'},
+                    notBadStyle: {backgroundColor: '#fff', borderColor: '#f9a825'},
+                    badStyle: {backgroundColor: '#d32f2f', borderColor: '#fff'}
+                });
+            }
+        }
+    }
+
+
     onChangeShitCnt = (shitCnt) => {
         console.log(shitCnt);
         const {changeShitCnt, changeShitDesc, changeShitCd} = this.props;

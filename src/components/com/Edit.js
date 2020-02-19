@@ -14,20 +14,6 @@ class Edit extends Component {
         };
     }
 
-    componentWillMount() {
-        const {textVal} = this.props;
-        if(!_.isNil(textVal)) {
-            this.setState({text: textVal});
-        }
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const {textVal} = this.props;
-        if(_.isNil(textVal) && textVal !== nextProps.textVal) {
-            this.setState({text: textVal});
-        }
-    }
-
     onChangeText = text => {
         const {onChangeEdit, allowRange, regExp} = this.props;
 
@@ -53,20 +39,19 @@ class Edit extends Component {
             }
         }
 
-        this.setState({text, isText});
         onChangeEdit(text, isText);
     }
 
     render() {
-        const {placeholder, warningText, type} = this.props;
-        const {isText, text} = this.state;
+        const {placeholder, warningText, type, textVal} = this.props;
+        const {isText} = this.state;
 
         return (
             <React.Fragment>
                 <div className={editRow}>
                     <div>
-                        <input type={type} value={text} onChange={e => this.onChangeText(e.target.value)} placeholder={placeholder}/>
-                        {text !== '' && <span className="material-icons" onClick={() => this.onChangeText('')}>clear</span>}
+                        <input type={type} value={textVal} onChange={e => this.onChangeText(e.target.value)} placeholder={placeholder}/>
+                        {textVal !== '' && <span className="material-icons" onClick={() => this.onChangeText('')}>clear</span>}
                     </div>
                 </div>
                 {!isText && !_.isNil(isText) && warningText !== '' && !_.isNil(warningText) && (

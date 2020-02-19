@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import {Row, Col} from 'react-bootstrap';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 
 import { inputRow, inputRowTitle} from '../../assets/styles/com.scss';
 import {noteDtlInputIntRow, noteDtlInputDecRow} from '../../assets/styles/note.scss';
@@ -16,6 +17,16 @@ class NoteDiaryDtlHeight extends Component {
             isHeightInt: false,
             isHeightDecimal: false
         };
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const {height} = this.props;
+        if (!_.isNil(nextProps.height) && height !== nextProps.height) {
+            this.setState({
+                heightInt: (nextProps.height + '').split('.')[0],
+                heightDecimal: (nextProps.height + '').split('.')[1]
+            });
+        }
     }
 
     onChangeHeightInt = (heightInt, heightDecimal, isText) => {
@@ -74,7 +85,8 @@ const WrapperStyled = styled.div`
 }`;
 
 NoteDiaryDtlHeight.propTypes = {
-    changeHeight: PropTypes.func
+    changeHeight: PropTypes.func,
+    height: PropTypes.string
 };
 
 export default NoteDiaryDtlHeight

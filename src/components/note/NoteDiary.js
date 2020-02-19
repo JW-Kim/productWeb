@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Accordion, Card, Row, Col} from 'react-bootstrap';
+import {Accordion, Card, Row, Col, Dropdown} from 'react-bootstrap';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
@@ -8,13 +8,18 @@ import styled from 'styled-components';
 import {NoteRest} from '../../apis/index';
 import Avatar from '../com/Avatar';
 import NoteDiaryState from './NoteDiaryState';
+import {openPop} from '../com/ModalSvc';
+import NoteDiaryDtl from './NoteDiaryDtl';
 import {noteStatRow} from '../../assets/styles/note.scss';
+import {note as noteActions} from '../../redux/actions/index';
+import {DiaryRest} from '../../apis/index';
 
 class NoteDiary extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            noteCfgs: []
+            noteCfgs: [],
+            openYn: true
         };
     }
 
@@ -30,9 +35,42 @@ class NoteDiary extends Component {
         this.setState({noteCfgs: res.data.data});
     }
 
+    updateDiary = () => {
+        const {noteId, diaryDt, diary, diaryMonth, setDiaryMonth, setDiaries, setDiaryDt} = this.props;
+        openPop(<NoteDiaryDtl type="UPDATE" noteId={noteId} diaryDt={diaryDt} diaryId={diary.diaryId}/>).then(() => {
+            const month = diaryMonth;
+            setDiaryMonth(null);
+            setDiaryMonth(month);
+            setDiaries(null);
+            setDiaryDt(null);
+        });
+    }
+
+    deleteDiary = () => {
+        this.callDeleteDiary();
+    }
+
+    async callDeleteDiary() {
+        const {diary, diaryMonth, setDiaryMonth, setDiaries, setDiaryDt, setDiary} = this.props;
+        await DiaryRest.deleteDiary(diary.diaryId);
+
+        const month = diaryMonth;
+        setDiaryMonth(null);
+        setDiaryMonth(month);
+        setDiaries(null);
+        setDiaryDt(null);
+        setDiary(null);
+    }
+
+    toggle = () => {
+        const {openYn} = this.state;
+
+        this.setState({openYn: !openYn});
+    }
+
     render() {
         const {diary} = this.props;
-        const {noteCfgs} = this.state;
+        const {noteCfgs, openYn} = this.state;
         const diaryDotStyle = {
             height: '5px',
             width: '5px',
@@ -47,9 +85,22 @@ class NoteDiary extends Component {
                 {!_.isNil(diary) &&
                     <div>
                         <Card>
-                            <Accordion.Toggle as={Card.Header} eventKey="0">
+                            <div>
+                            <Accordion.Toggle as={Card.Header} eventKey="0" onClick={() => this.toggle()}>
                                 <span style={diaryDotStyle}></span>{diary.title}
                             </Accordion.Toggle>
+                                {openYn && (
+                                <Dropdown>
+                                    <Dropdown.Toggle id="dropdown-basic">
+                                        <span className="material-icons">more_horiz</span>
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                        <Dropdown.Item key={1} onClick={() => this.updateDiary()}>수정</Dropdown.Item>
+                                        <Dropdown.Item key={2} onClick={() => this.deleteDiary()}>삭제</Dropdown.Item>
+                                    </Dropdown.Menu>
+                                </Dropdown>)
+                                }
+                            </div>
                             <Accordion.Collapse eventKey="0">
                                 <Card.Body>
                                     <Avatar fileId={diary.fileId} style={{width: '100%'}} shape="thumbnail"/>
@@ -107,24 +158,62 @@ const WrapperStyled = styled.div`
         font-size: 15px;
         color: #142765;
         background-color: #fff;
+        display: inline-block;
+        width: 80%;
     }
     .card-body {
         font-size: 12px;
         color: #142765;
     }
+    .dropdown {
+        width: 20%;
+        float: right;
+        button {
+            background-color: #fff;
+            border-color: #fff;
+            color: #000;
+            font-size: 20px;
+            font-weight:600;
+        }
+    }   
+    
+    .btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:not(:disabled):not(.disabled):active:focus, .show>.btn-primary.dropdown-toggle:focus {
+        box-shadow: 0 0 0 0.2rem rgba(255,255,255,.5);
+    } 
+    
+    .btn-primary.focus, .btn-primary:focus {
+        box-shadow: 0 0 0 0.2rem rgba(255,255,255,.5);
+    }
+    
+    .dropdown-toggle::after {
+        border-top: 0
+    }
 }`;
 
 NoteDiary.propTypes = {
     diary: PropTypes.object,
-    noteId: PropTypes.string
+    noteId: PropTypes.string,
+    diaryDt: PropTypes.string,
+    diaryMonth: PropTypes.string,
+    setDiaryMonth: PropTypes.func,
+    setDiaries: PropTypes.func,
+    setDiaryDt: PropTypes.func,
+    setDiary: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
     diary: state.note.diary,
-    noteId: state.note.noteId
+    noteId: state.note.noteId,
+    diaryDt: state.note.diaryDt,
+    diaryMonth: state.note.diaryMonth
 });
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = {
+    setDiaryMonth: noteActions.setDiaryMonth,
+    setDiaries: noteActions.setDiaries,
+    setDiaryDt: noteActions.setDiaryDt,
+    setDiary: noteActions.setDiary
+};
 
 export default connect(
     mapStateToProps,

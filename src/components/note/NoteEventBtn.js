@@ -7,7 +7,7 @@ import _ from 'lodash';
 import onClickOutside from 'react-onclickoutside';
 
 import {openPop} from '../com/ModalSvc';
-import NoteDiaryDtl from '../note/NoteDairyDtl';
+import NoteDiaryDtl from './NoteDiaryDtl';
 import {note as noteActions} from '../../redux/actions/index';
 
 class NoteEventBtn extends Component {

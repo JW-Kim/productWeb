@@ -41,8 +41,42 @@ class NoteDiaryDtl extends Component {
     }
 
     componentDidMount() {
+        const {type} = this.props;
         this.promise = new $.Deferred();
         $('.modal-backdrop').css('z-index', '1050');
+
+        if (type === 'UPDATE') {
+            this.getDiary();
+        }
+    }
+
+    async getDiary() {
+        const {diaryId} = this.props;
+        const res = await DiaryRest.getDiary(diaryId);
+        const diary = res.data.data;
+
+        this.setState({
+            title: diary.title,
+            content: diary.content,
+            fileId: diary.fileId,
+            height: diary.height,
+            heightInt: (diary.height + '').split('.')[0],
+            heightDecimal: (diary.height + '').split('.')[1],
+            weight: diary.weight,
+            weightInt: (diary.weight + '').split('.')[0],
+            weightDecimal: (diary.weight + '').split('.')[1],
+            shitCnt: diary.shitCnt,
+            shitDesc: diary.shitDesc,
+            shitCd: diary.shitCd,
+            sleepStartTime: diary.sleepStartTime,
+            sleepEndTime: diary.sleepEndTime,
+            feelingCd: diary.feelingCd,
+            healthCd: diary.healthCd,
+            feverCd: diary.feverCd,
+            breakfastCd: diary.breakfastCd,
+            lunchCd: diary.lunchCd,
+            dinnerCd: diary.dinnerCd,
+        });
     }
 
     onCancel = () => {
@@ -54,6 +88,8 @@ class NoteDiaryDtl extends Component {
 
         if (type === 'CREATE') {
             this.insertDiary();
+        } else {
+            this.updateDiary();
         }
 
         return this.promise.resolve();
@@ -81,6 +117,49 @@ class NoteDiaryDtl extends Component {
         } = this.state;
 
         await DiaryRest.createDiary({
+            feelingCd: feelingCd === null ? '' : feelingCd,
+            healthCd: healthCd === null ? '' : healthCd,
+            feverCd: feverCd === null ? '' : feverCd,
+            breakfastCd: breakfastCd === null ? '' : breakfastCd,
+            lunchCd: lunchCd === null ? '' : lunchCd,
+            dinnerCd: dinnerCd === null ? '' : dinnerCd,
+            shitCd: shitCd === null ? '' : shitCd,
+            shitCnt: shitCnt === null ? 0 : shitCnt,
+            shitDesc: shitDesc === null ? '' : shitDesc,
+            sleepStartTime: sleepStartTime === null ? '' : sleepStartTime,
+            sleepEndTime: sleepEndTime === null ? '' : sleepEndTime,
+            title: _.isNil(title) || title === '' ? getTodayDt() : title,
+            content: content === null ? '' : content,
+            fileId,
+            noteId,
+            diaryDt: getDt(diaryDt),
+            height: height === null ? 0 : height,
+            weight: weight === null ? 0 : weight
+        });
+    }
+
+    async updateDiary() {
+        const {noteId, diaryDt, diaryId} = this.props;
+        const {
+            feelingCd,
+            healthCd,
+            feverCd,
+            breakfastCd,
+            lunchCd,
+            dinnerCd,
+            shitCd,
+            shitCnt,
+            shitDesc,
+            sleepStartTime,
+            sleepEndTime,
+            title,
+            content,
+            fileId,
+            height,
+            weight
+        } = this.state;
+
+        await DiaryRest.updateDiary(diaryId, {
             feelingCd: feelingCd === null ? '' : feelingCd,
             healthCd: healthCd === null ? '' : healthCd,
             feverCd: feverCd === null ? '' : feverCd,
@@ -147,7 +226,9 @@ class NoteDiaryDtl extends Component {
             feverCd,
             breakfastCd,
             lunchCd,
-            dinnerCd
+            dinnerCd,
+            height,
+            weight
         } = this.state;
 
         return (
@@ -170,8 +251,8 @@ class NoteDiaryDtl extends Component {
                                     />
                                 </Col>
                             </Row>
-                            <NoteDiaryDtlHeight changeHeight={(height, isHeight) => this.onChangeHeight(height, isHeight)}/>
-                            <NoteDiaryDtlWeight changeWeight={(weight, isWeight) => this.onChangeWeight(weight, isWeight)}/>
+                            <NoteDiaryDtlHeight height={height} changeHeight={(text, isHeight) => this.onChangeHeight(text, isHeight)}/>
+                            <NoteDiaryDtlWeight weight={weight} changeWeight={(text, isWeight) => this.onChangeWeight(text, isWeight)}/>
                             <NoteDiaryDtlState title="기분" code={feelingCd} setCode={(code) => this.setState({feelingCd: code})}/>
                             <NoteDiaryDtlState title="건강" code={healthCd} setCode={(code) => this.setState({healthCd: code})}/>
                             <NoteDiaryDtlState title="열" code={feverCd} setCode={(code) => this.setState({feverCd: code})}/>
@@ -204,7 +285,8 @@ class NoteDiaryDtl extends Component {
 NoteDiaryDtl.propTypes = {
     type: PropTypes.string,
     noteId: PropTypes.string,
-    diaryDt: PropTypes.string
+    diaryDt: PropTypes.string,
+    diaryId: PropTypes.string
 };
 
 export default NoteDiaryDtl;

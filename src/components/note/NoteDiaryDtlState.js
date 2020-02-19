@@ -30,6 +30,31 @@ class NoteDiaryDtlState extends Component {
         }
     }
 
+    componentWillReceiveProps(nextProps) {
+        const {code} = this.props;
+        if (!_.isNil(nextProps.code) && code !== nextProps.code) {
+            if (nextProps.code === 'good') {
+                this.setState({
+                    goodStyle: {backgroundColor: '#4caf50', borderColor: '#fff'},
+                    notBadStyle: {backgroundColor: '#fff', borderColor: '#f9a825'},
+                    badStyle: {backgroundColor: '#fff', borderColor: '#d32f2f'}
+                });
+            } else if(nextProps.code === 'notBad') {
+                this.setState({
+                    goodStyle: {backgroundColor: '#fff', borderColor: '#4caf50'},
+                    notBadStyle: {backgroundColor: '#f9a825', borderColor: '#fff'},
+                    badStyle: {backgroundColor: '#fff', borderColor: '#d32f2f'}
+                });
+            } else {
+                this.setState({
+                    goodStyle: {backgroundColor: '#fff', borderColor: '#4caf50'},
+                    notBadStyle: {backgroundColor: '#fff', borderColor: '#f9a825'},
+                    badStyle: {backgroundColor: '#d32f2f', borderColor: '#fff'}
+                });
+            }
+        }
+    }
+
     updateIndex = (selectedIndex) => {
         const {setCode} = this.props;
 

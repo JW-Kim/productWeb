@@ -22,6 +22,14 @@ class DiaryRest {
     static createDiary(params) {
         return $http.post(`${prefix}`, params);
     }
+
+    static updateDiary(diaryId, params) {
+        return $http.post(`${prefix}/${diaryId}`, params);
+    }
+
+    static deleteDiary(diaryId) {
+        return $http.delete(`${prefix}/${diaryId}`);
+    }
 }
 
 export default DiaryRest;

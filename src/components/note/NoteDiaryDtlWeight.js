@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import {Row, Col} from 'react-bootstrap';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 
 import { inputRow, inputRowTitle} from '../../assets/styles/com.scss';
 import {noteDtlInputIntRow, noteDtlInputDecRow} from '../../assets/styles/note.scss';
@@ -17,6 +18,17 @@ class NoteDiaryDtlWeight extends Component {
             isWeightDecimal: false
         };
     }
+
+    componentWillReceiveProps(nextProps) {
+        const {weight} = this.props;
+        if (!_.isNil(nextProps.weight) && weight !== nextProps.weight) {
+            this.setState({
+                weightInt: (nextProps.weight + '').split('.')[0],
+                weightDecimal: (nextProps.weight + '').split('.')[1]
+            });
+        }
+    }
+
 
     onChangeWeightInt = (weightInt, weightDecimal, isText) => {
         console.log(weightInt, weightDecimal, isText);
@@ -74,7 +86,8 @@ const WrapperStyled = styled.div`
 }`;
 
 NoteDiaryDtlWeight.propTypes = {
-    changeWeight: PropTypes.func
+    changeWeight: PropTypes.func,
+    weight: PropTypes.string
 };
 
 export default NoteDiaryDtlWeight

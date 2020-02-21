@@ -46,6 +46,16 @@
   }
 }
 
+.textareaEditRow {
+  textarea {
+    width: 100%;
+    height: 120px;
+    padding-left:10px;
+    padding-right:30px;
+    border: 1px solid #C2D8E9;
+  }
+}
+
 .inputRowTitle {
   line-height: 60px;
 }

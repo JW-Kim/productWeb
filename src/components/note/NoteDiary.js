@@ -36,13 +36,18 @@ class NoteDiary extends Component {
     }
 
     updateDiary = () => {
-        const {noteId, diaryDt, diary, diaryMonth, setDiaryMonth, setDiaries, setDiaryDt} = this.props;
+        const {noteId, diaryDt, diary, diaryMonth, setDiaryMonth, setDiaries, setDiaryDt, setDisease, setDiary} = this.props;
         openPop(<NoteDiaryDtl type="UPDATE" noteId={noteId} diaryDt={diaryDt} diaryId={diary.diaryId}/>).then(() => {
             const month = diaryMonth;
             setDiaryMonth(null);
             setDiaryMonth(month);
             setDiaries(null);
             setDiaryDt(null);
+            setDisease(null);
+            setDiary(null);
+            this.setState({openYn: false});
+        }, () => {
+            this.setState({openYn: false});
         });
     }
 
@@ -51,7 +56,7 @@ class NoteDiary extends Component {
     }
 
     async callDeleteDiary() {
-        const {diary, diaryMonth, setDiaryMonth, setDiaries, setDiaryDt, setDiary} = this.props;
+        const {diary, diaryMonth, setDiaryMonth, setDiaries, setDiaryDt, setDiary, setDisease} = this.props;
         await DiaryRest.deleteDiary(diary.diaryId);
 
         const month = diaryMonth;
@@ -60,6 +65,8 @@ class NoteDiary extends Component {
         setDiaries(null);
         setDiaryDt(null);
         setDiary(null);
+        setDisease(null);
+        this.setState({openYn: false});
     }
 
     toggle = () => {
@@ -198,21 +205,23 @@ NoteDiary.propTypes = {
     setDiaryMonth: PropTypes.func,
     setDiaries: PropTypes.func,
     setDiaryDt: PropTypes.func,
-    setDiary: PropTypes.func
+    setDiary: PropTypes.func,
+    setDisease: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
     diary: state.note.diary,
     noteId: state.note.noteId,
     diaryDt: state.note.diaryDt,
-    diaryMonth: state.note.diaryMonth
+    diaryMonth: state.note.diaryMonth,
 });
 
 const mapDispatchToProps = {
     setDiaryMonth: noteActions.setDiaryMonth,
     setDiaries: noteActions.setDiaries,
     setDiaryDt: noteActions.setDiaryDt,
-    setDiary: noteActions.setDiary
+    setDiary: noteActions.setDiary,
+    setDisease: noteActions.setDisease,
 };
 
 export default connect(

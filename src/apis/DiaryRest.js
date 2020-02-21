@@ -30,6 +30,18 @@ class DiaryRest {
     static deleteDiary(diaryId) {
         return $http.delete(`${prefix}/${diaryId}`);
     }
+
+    static updateDisease(diseaseId, params) {
+        return $http.post(`${prefix}/disease/${diseaseId}`, params);
+    }
+
+    static insertDisease(params) {
+        return $http.post(`${prefix}/disease`, params);
+    }
+
+    static deleteDisease(diseaseId) {
+        return $http.delete(`${prefix}/disease/${diseaseId}`);
+    }
 }
 
 export default DiaryRest;

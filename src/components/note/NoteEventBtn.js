@@ -8,6 +8,7 @@ import onClickOutside from 'react-onclickoutside';
 
 import {openPop} from '../com/ModalSvc';
 import NoteDiaryDtl from './NoteDiaryDtl';
+import NoteDiseaseDtl from './NoteDiseaseDtl';
 import {note as noteActions} from '../../redux/actions/index';
 
 class NoteEventBtn extends Component {
@@ -32,7 +33,7 @@ class NoteEventBtn extends Component {
     }
 
     openNoteDiaryDtl = () => {
-        const {noteId, diaryDt, setDiaryMonth, diaryMonth, setDiaries, setDiaryDt} = this.props;
+        const {noteId, diaryDt, setDiaryMonth, diaryMonth, setDiaries, setDiaryDt, setDisease, setDiary} = this.props;
         this.setState({openYn: false});
         openPop(<NoteDiaryDtl type="CREATE" noteId={noteId} diaryDt={diaryDt}/>).then(() => {
             const month = diaryMonth;
@@ -40,6 +41,25 @@ class NoteEventBtn extends Component {
             setDiaryMonth(month);
             setDiaries(null);
             setDiaryDt(null);
+            setDisease(null);
+            setDiary(null);
+        }, () => {
+            this.setState({openYn: false});
+        });
+    }
+
+    openNoteDiseaseDtl = () => {
+        const {noteId, diaryDt, diaryMonth, setDiaryMonth, setDiaryDt, setDisease, setDiary} = this.props;
+        openPop(<NoteDiseaseDtl type="CREATE" noteId={noteId} diseaseDt={diaryDt}/>).then(() => {
+            const month = diaryMonth;
+            setDiaryMonth(null);
+            setDiaryMonth(month);
+            setDiaryDt(null);
+            setDisease(null);
+            setDiary(null);
+            this.setState({openYn: false});
+        }, () => {
+            this.setState({openYn: false});
         });
     }
 
@@ -71,7 +91,7 @@ class NoteEventBtn extends Component {
                                     <Tooltip>질병 기록</Tooltip>
                                 }
                             >
-                                <span id="createDisease" className="material-icons">create</span>
+                                <span id="createDisease" className="material-icons" onClick={() => this.openNoteDiseaseDtl()}>create</span>
                             </OverlayTrigger>
                     )}
                     {openYn && displayYn  && (
@@ -127,7 +147,9 @@ NoteEventBtn.propTypes = {
     diaryMonth: PropTypes.string,
     setDiaryMonth: PropTypes.func,
     setDiaries: PropTypes.func,
-    setDiaryDt: PropTypes.func
+    setDiaryDt: PropTypes.func,
+    setDiary: PropTypes.func,
+    setDisease: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
@@ -141,6 +163,8 @@ const mapDispatchToProps = {
     setDiaryMonth: noteActions.setDiaryMonth,
     setDiaries: noteActions.setDiaries,
     setDiaryDt: noteActions.setDiaryDt,
+    setDiary: noteActions.setDiary,
+    setDisease: noteActions.setDisease,
 };
 
 export default connect(

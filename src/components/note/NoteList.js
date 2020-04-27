@@ -29,6 +29,20 @@ class NoteList extends Component {
         }
     }
 
+    async componentWillReceiveProps(nextProps) {
+        const {notes, setNote} = this.props;
+
+        if(_.isNil(notes) && notes !== nextProps.notes) {
+            const res = await NoteRest.getNotes();
+            const noteList = res.data.data;
+
+            if (noteList.length > 0 ) {
+                setNote(noteList[0].noteId);
+                this.setState({noteList, fileId: noteList[0].fileId});
+            }
+        }
+    }
+
     onChangeNote = (noteId) => {
         const {setNote, setDiary, setDisease, setDiaryDt} = this.props;
         const {noteList} = this.state;
@@ -103,6 +117,7 @@ const WrapperStyled = styled.div`
 
 NoteList.propTypes = {
     noteId: PropTypes.string,
+    notes: PropTypes.object,
     setNote: PropTypes.func,
     setDiary: PropTypes.func,
     setDisease: PropTypes.func,
@@ -110,7 +125,8 @@ NoteList.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-    noteId: state.note.noteId
+    noteId: state.note.noteId,
+    notes: state.note.notes
 });
 
 const mapDispatchToProps = {

@@ -1,14 +1,12 @@
 import React, {Component} from 'react';
 import Cookies from 'js-cookie';
 import { Redirect, Link } from 'react-router-dom';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import {LoginRest} from '../../apis/index';
 import {Button, Container, Row, Col, Image} from 'react-bootstrap';
 import {login, loginBtn, image, signUp, inputRow } from '../../assets/styles/login.scss';
 import {warningRow} from '../../assets/styles/com.scss';
-import {dialog as DialogActions} from '../../redux/actions/index';
 import _ from 'lodash';
+import {toast} from '../com/ComSvc';
 
 import logo from '../../assets/img/logo3.png';
 
@@ -65,7 +63,6 @@ class Login extends Component {
     }
 
     async onClick() {
-        const {setToast} = this.props;
         const {username, password, isUsername, isPassword} = this.state;
 
         if(!(isUsername && isPassword) && _.isNil(isUsername) && _.isNil(isPassword)) {
@@ -73,7 +70,7 @@ class Login extends Component {
         }
 
         if(username === '' || password === '') {
-            setToast({toastYn: true, toastMsg: '아이디, 패스워드를 입력하세요.'});
+            toast('아이디, 패스워드를 입력하세요.');
             return;
         }
 
@@ -83,7 +80,7 @@ class Login extends Component {
             Cookies.set('token', res.data.data);
             this.setState({redirectYn: true});
         } else {
-            setToast({toastYn: true, toastMsg: '아이디, 비밀번호가 일치하지 않습니다.'});
+            toast('아이디, 비밀번호가 일치하지 않습니다.');
         }
     }
 
@@ -134,16 +131,5 @@ class Login extends Component {
     }
 }
 
-Login.propTypes = {
-    setToast: PropTypes.func
-};
-
-const mapDispatchToProps = {
-    setToast: DialogActions.setToast
-};
-
-export default connect(
-    null,
-    mapDispatchToProps
-)(Login);
+export default Login;
 

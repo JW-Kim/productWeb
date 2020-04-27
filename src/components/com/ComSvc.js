@@ -1,10 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Confirm from '../com/Confirm';
+import ToastModal from '../com/ToastModal';
 
 function confirm(msg) {
     const wrapper = document.body.appendChild(document.createElement('div'));
     const component = ReactDOM.render(<Confirm msg={msg}/>, wrapper);
+    const cleanup = () => {
+        ReactDOM.unmountComponentAtNode(wrapper);
+        return wrapper.remove();
+    };
+
+    return component.promise.always(cleanup).promise();
+}
+
+function toast(msg) {
+    const wrapper = document.body.appendChild(document.createElement('div'));
+    const component = ReactDOM.render(<ToastModal msg={msg}/>, wrapper);
     const cleanup = () => {
         ReactDOM.unmountComponentAtNode(wrapper);
         return wrapper.remove();
@@ -48,4 +60,9 @@ function getDt(date) {
     return `${year}-${month}-${day}`;
 }
 
-export {confirm, getTodayDt, getDt};
+export {
+    confirm,
+    getTodayDt,
+    getDt,
+    toast
+};

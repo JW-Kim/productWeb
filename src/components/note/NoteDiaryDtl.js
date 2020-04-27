@@ -3,9 +3,10 @@ import {Modal, Row, Col, Container} from 'react-bootstrap';
 import $ from 'jquery';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import Resizer from 'react-image-file-resizer';
 
-import {myModal, modalBody} from '../../assets/styles/com.scss';
-import { inputRow, inputRowTitle} from '../../assets/styles/com.scss';
+import {myModal, modalBody, inputRowTitle, inputRow} from '../../assets/styles/com.scss';
+import {noteDtlTextAreaRow} from '../../assets/styles/note.scss';
 import ModalHeader from '../com/ModalHeader';
 import Edit from '../com/Edit';
 import NoteDiaryDtlHeight from './NoteDiaryDtlHeight';
@@ -13,7 +14,7 @@ import NoteDiaryDtlWeight from './NoteDiaryDtlWeight';
 import NoteDiaryDtlShit from './NoteDiaryDtlShit';
 import NoteDiaryDtlSleep from './NoteDiaryDtlSleep';
 import NoteDiaryDtlState from './NoteDiaryDtlState';
-import {DiaryRest} from '../../apis/index';
+import {DiaryRest, FileRest} from '../../apis/index';
 import {getTodayDt, getDt} from '../com/ComSvc';
 
 class NoteDiaryDtl extends Component {
@@ -36,7 +37,9 @@ class NoteDiaryDtl extends Component {
             lunchCd: '',
             dinnerCd: '',
             isHeight: false,
-            isWeight: false
+            isWeight: false,
+            fileId: null,
+            fileUri: null
         };
     }
 
@@ -85,14 +88,21 @@ class NoteDiaryDtl extends Component {
 
     onSave = () => {
         const {type} = this.props;
+        const {fileUri} = this.state;
 
         if (type === 'CREATE') {
-            this.insertDiary();
+            if(!_.isNil(fileUri)) {
+                this.fileUpload();
+            } else {
+                this.insertDiary();
+            }
         } else {
-            this.updateDiary();
+            if(!_.isNil(fileUri)) {
+                this.fileUpload();
+            } else {
+                this.updateDiary();
+            }
         }
-
-        return this.promise.resolve();
     }
 
     async insertDiary() {
@@ -136,6 +146,8 @@ class NoteDiaryDtl extends Component {
             height: height === null ? 0 : height,
             weight: weight === null ? 0 : weight
         });
+
+        return this.promise.resolve();
     }
 
     async updateDiary() {
@@ -179,6 +191,8 @@ class NoteDiaryDtl extends Component {
             height: height === null ? 0 : height,
             weight: weight === null ? 0 : weight
         });
+
+        return this.promise.resolve();
     }
 
     onChangeTitle = (title) => {
@@ -213,9 +227,127 @@ class NoteDiaryDtl extends Component {
         this.setState({sleepEndTime});
     }
 
+    onSelectedFile = (e) => {
+        const cur = this;
+        const file = e.target.files[0];
+
+        if(file.type.substring(0, 5) !== 'image') {
+            e.preventDefault();
+            return;
+        }
+
+        this.getOrientation(file, function(event) {
+            alert(event);
+
+            let rotation = 0;
+            if(event === 6) {
+                rotation = 90;
+            } else if(event === 8) {
+                rotation = 270;
+            } else if(event === 3) {
+                rotation = 180;
+            }
+
+            console.log(file);
+            Resizer.imageFileResizer(file, 1000, 1000, 'jpeg', 100, rotation,
+                uri => {
+                    cur.setState({fileUri: uri});
+                }, 'base64');
+        });
+    }
+
+    getOrientation(file, callback) {
+        const reader = new FileReader();
+
+        reader.onload = function(event) {
+            const view = new DataView(event.target.result);
+
+            if (view.getUint16(0, false) !== 0xFFD8) return callback(-2);
+
+            const length = view.byteLength;
+            let offset = 2;
+
+            while (offset < length) {
+                const marker = view.getUint16(offset, false);
+                offset += 2;
+
+                if (marker === 0xFFE1) {
+                    if (view.getUint32(offset += 2, false) !== 0x45786966) {
+                        return callback(-1);
+                    }
+                    const little = view.getUint16(offset += 6, false) === 0x4949;
+                    offset += view.getUint32(offset + 4, little);
+                    const tags = view.getUint16(offset, little);
+                    offset += 2;
+
+                    for (let i = 0; i < tags; i++) {
+                        if (view.getUint16(offset + (i * 12), little) === 0x0112) {
+                            return callback(view.getUint16(offset + (i * 12) + 8, little));
+                        }
+                    }
+                } else if ((marker & 0xFF00) !== 0xFF00) {
+                    break;
+                } else {
+                    offset += view.getUint16(offset, false);
+                }
+            }
+            return callback(-1);
+        };
+
+        reader.readAsArrayBuffer(file.slice(0, 64 * 1024));
+    }
+
+    async fileUpload() {
+        const cur = this;
+        const {type} = this.props;
+        const {fileUri} = this.state;
+
+        const block = fileUri.split(';');
+        const contentType = block[0].split(':')[1];
+        const realDate = block[1].split(',')[1];
+
+        const formData = new FormData();
+        formData.append('image', this.b64toBlob(realDate, contentType));
+
+        const res = await FileRest.fileUpload(formData);
+
+        this.setState({fileId: res.data.data.fileId}, () => {
+            if(type === 'CREATE') {
+                cur.insertDiary();
+            } else {
+                cur.updateDiary();
+            }
+        });
+    }
+
+    b64toBlob = (b64Data, contentType = '', sliceSize = 512) => {
+        const byteCharacters = atob(b64Data);
+        const byteArrays = [];
+
+        for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+            const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+            const byteNumbers = new Array(slice.length);
+            for (let i = 0; i < slice.length; i++) {
+                byteNumbers[i] = slice.charCodeAt(i);
+            }
+
+            const byteArray = new Uint8Array(byteNumbers);
+            byteArrays.push(byteArray);
+        }
+
+        const blob = new Blob(byteArrays, {type: contentType});
+        return blob;
+    }
+
+    onChangeContent = (e) => {
+        this.setState({content: e.target.value});
+    }
+
     render() {
         const {
             title,
+            content,
             shitCnt,
             shitCd,
             shitDesc,
@@ -228,7 +360,8 @@ class NoteDiaryDtl extends Component {
             lunchCd,
             dinnerCd,
             height,
-            weight
+            weight,
+            fileUri
         } = this.state;
 
         return (
@@ -238,7 +371,11 @@ class NoteDiaryDtl extends Component {
                     <div className={modalBody}>
                         <Container style={{padding: '5px'}}>
                             <Row className={inputRow}>
-                                <Col className={inputRowTitle} xs={4}>제목</Col>
+                                <input type="file" name="image" onChange={this.onSelectedFile}/>
+                                <img src={fileUri} style={{width: '100%'}}/>
+                            </Row>
+                            <Row className={inputRow}>
+                                <Col className={inputRowTitle} xs={4}>내용</Col>
                                 <Col xs={8}>
                                     <Edit
                                         type="text"
@@ -249,6 +386,12 @@ class NoteDiaryDtl extends Component {
                                         regExp={/[ㄱ-ㅎ가-힣A-Za-z0-9]/g}
                                         allowRange={{ special: false, max: 12 }}
                                     />
+                                </Col>
+                            </Row>
+                            <Row className={inputRow}>
+                                <Col className={inputRowTitle} xs={4} />
+                                <Col xs={8} className={noteDtlTextAreaRow}>
+                                    <textarea value={content} onChange={this.onChangeContent} />
                                 </Col>
                             </Row>
                             <NoteDiaryDtlHeight height={height} changeHeight={(text, isHeight) => this.onChangeHeight(text, isHeight)}/>

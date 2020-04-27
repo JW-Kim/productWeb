@@ -3,23 +3,20 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import {Col, Row} from 'react-bootstrap';
 import _ from 'lodash';
-import { connect } from 'react-redux';
-import {withRouter} from 'react-router';
 
 import {NoteRest} from '../../apis/index';
 import {noteInfo} from '../../assets/styles/set.scss';
 import {modalSubTitle} from '../../assets/styles/com.scss';
-import SearchUser from '../user/SearchUser';
-import {dialog as DialogActions} from '../../redux/actions/index';
 import Avatar from '../com/Avatar';
-import {confirm} from '../com/ComSvc';
+import {confirm, toast} from '../com/ComSvc';
+import {openPop} from '../com/ModalSvc';
+import SearchUser from '../user/SearchUser';
 
 class NoteDtlShare extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            shareUserList: [],
-            SearchUserOpenYn: false
+            shareUserList: []
         };
         this.setShareUser = this.setShareUser.bind(this);
         this.deleteShareUser = this.deleteShareUser.bind(this);
@@ -27,17 +24,6 @@ class NoteDtlShare extends Component {
 
     componentDidMount() {
         this.getShareUserList();
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const {openYn} = this.props;
-
-        if(!openYn && nextProps.openYn) {
-            this.setState({
-                shareUserList: [],
-                SearchUserOpenYn: false
-            }, () => {this.getShareUserList();});
-        }
     }
 
     async getShareUserList() {
@@ -48,30 +34,33 @@ class NoteDtlShare extends Component {
         }
     }
 
-    onClose = () => {
-        this.setState({SearchUserOpenYn: false});
-    };
-
     onOpenSearchUser = () => {
-        this.setState({SearchUserOpenYn: true});
+        openPop(<SearchUser setShareUser={(userId, userNm, fileId) => this.setShareUser(userId, userNm, fileId)}/>).then(() => {
+
+        });
     };
 
     async setShareUser(userId, userNm, fileId) {
-        const {type, setShareUserList, noteId, setToast} = this.props;
+        const {type, setShareUserList, noteId} = this.props;
         const {shareUserList} = this.state;
 
         const shareUser = _.find(shareUserList, {userId});
         if(!_.isNil(shareUser)) {
-            setToast({toastYn: true, toastMsg: '이미 공유 되었습니다'});
+            toast('이미 공유 되었습니다');
             return;
         }
 
         if(type === 'UPDATE') {
             const res = await NoteRest.insertNoteShareUser(noteId, {userId});
             if (res.status === 200) {
-                setToast({toastYn: true, toastMsg: '공유 되었습니다.'});
+                toast('공유 되었습니다.');
+
+                const tmpShareUserList = _.clone(shareUserList);
+                tmpShareUserList.push({userId, userNm, fileId});
+                this.setState({shareUserList: tmpShareUserList});
+                setShareUserList(tmpShareUserList);
             }else {
-                setToast({toastYn: true, toastMsg: '공유를 실패하였습니다.'});
+                toast('공유를 실패하였습니다.');
             }
         } else {
             const tmpShareUserList = _.clone(shareUserList);
@@ -82,16 +71,20 @@ class NoteDtlShare extends Component {
     }
 
     deleteShareUser(userId) {
-        const {type, setShareUserList, setToast, noteId} = this.props;
+        const {type, setShareUserList, noteId} = this.props;
         const {shareUserList} = this.state;
 
         confirm('공유한 사람을 삭제하시겠습니까?').then(() => {
             if (type === 'UPDATE') {
                 NoteRest.deleteNoteShareUser(noteId, userId).then(res => {
                     if (res.status === 200) {
-                        setToast({toastYn: true, toastMsg: ' 삭제되었습니다.'});
+                        toast('삭제되었습니다.');
+
+                        const tmpShareUserList = _.reject(shareUserList, {userId});
+                        this.setState({shareUserList: tmpShareUserList});
+                        setShareUserList(tmpShareUserList);
                     }else {
-                        setToast({toastYn: true, toastMsg: '삭제를 실패하였습니다.'});
+                        toast('삭제를 실패하였습니다.');
                     }
                 });
             } else {
@@ -129,8 +122,6 @@ class NoteDtlShare extends Component {
     };
 
     render() {
-        const {SearchUserOpenYn} = this.state;
-
         return (
             <WrapperStyled>
             <div className={noteInfo}>
@@ -139,7 +130,6 @@ class NoteDtlShare extends Component {
                     <Col xs={2}><span className="material-icons" style={{'color': '#4caf50', 'fontSize': '20px'}} onClick={() => this.onOpenSearchUser()}>add_circle</span></Col>
                 </Row>
                 {this.renderList()}
-                <SearchUser openYn={SearchUserOpenYn} setShareUser={(userId, userNm, fileId) => this.setShareUser(userId, userNm, fileId)} close={() => this.onClose()}/>
             </div>
             </WrapperStyled>
         );
@@ -151,18 +141,9 @@ const WrapperStyled = styled.div`
 }`;
 
 NoteDtlShare.propTypes = {
-    openYn: PropTypes.bool,
     type: PropTypes.string,
     noteId: PropTypes.string,
-    setShareUserList: PropTypes.func,
-    setToast: PropTypes.func
+    setShareUserList: PropTypes.func
 };
 
-const mapDispatchToProps = {
-    setToast: DialogActions.setToast
-};
-
-export default connect(
-    null,
-    mapDispatchToProps
-)(withRouter(NoteDtlShare));
+export default NoteDtlShare;

@@ -14,6 +14,7 @@ import NoteDisease from './NoteDisease';
 import NoteDtl from '../set/NoteDtl';
 import NoteEventBtn from './NoteEventBtn';
 import {noteEmpty, noteEmptyIcon} from '../../assets/styles/note.scss';
+import {openPop} from '../com/ModalSvc';
 
 class Note extends Component {
     constructor(props) {
@@ -22,7 +23,6 @@ class Note extends Component {
             isNoteEmpty: true,
             noteDiv: {
                 overflowY: 'scroll',
-                noteDtlYn: false,
                 displayYn: false
             }
         };
@@ -41,20 +41,53 @@ class Note extends Component {
         });
     }
 
-    componentWillReceiveProps(nextProps) {
+    async componentWillReceiveProps(nextProps) {
+        const {notes, setNotes} = this.props;
+
         if (_.isNil(nextProps.diaryDt) || nextProps.diaryDt === '') {
             this.setState({displayYn: false});
         } else {
             this.setState({displayYn: true});
         }
+
+        if(_.isNil(nextProps.notes) && notes !== nextProps.notes) {
+            const res = await NoteRest.getNotes();
+            setNotes(res.data.data);
+            this.setState({
+                isNoteEmpty: res.data.data.length === 0,
+                noteDiv: {
+                    overflowY: 'scroll',
+                    height: `${window.innerHeight - 60}px`
+                }
+            });
+        }
+    }
+
+    onCloseNoteDtl = () => {
+
+    }
+
+    async initNotes() {
+        const {setNotes} = this.props;
+        const res = await NoteRest.getNotes();
+        setNotes(res.data.data);
+        this.setState({
+            isNoteEmpty: res.data.data.length === 0,
+            noteDiv: {
+                overflowY: 'scroll',
+                height: `${window.innerHeight - 60}px`
+            }
+        });
     }
 
     onOpenNoteDtl = () => {
-        this.setState({noteDtlYn: true});
+        openPop(<NoteDtl type="CREATE" close={() => this.onCloseNoteDtl()} />).then(() => {
+            this.initNotes();
+        });
     }
 
     render() {
-        const {noteDiv, isNoteEmpty, noteDtlYn, displayYn} = this.state;
+        const {noteDiv, isNoteEmpty, displayYn} = this.state;
         return (
             <WrapperStyled>
                 {isNoteEmpty && (
@@ -76,7 +109,6 @@ class Note extends Component {
                     </div>
                 </div>
                 )}
-                <NoteDtl openYn={noteDtlYn} type="CREATE" close={() => this.setState({noteDtlYn: false})} />
             </WrapperStyled>
         );
     }
@@ -88,7 +120,6 @@ const WrapperStyled = styled.div`
         margin-bottom: 100px;
     }
 }`;
-
 
 Note.propTypes = {
     notes: PropTypes.object,

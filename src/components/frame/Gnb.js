@@ -3,9 +3,14 @@ import { Redirect } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import {Row, Col, Dropdown} from 'react-bootstrap';
 import styled from 'styled-components';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 import {gnbRow, gnbTitle} from '../../assets/styles/gnb.scss';
 import Set from '../set/Set';
+import Note from '../set/Note';
+import {openPop} from '../com/ModalSvc';
+import {note as noteActions} from '../../redux/actions/index';
 
 class Gnb extends Component {
     constructor(props) {
@@ -19,6 +24,20 @@ class Gnb extends Component {
     onLogout = () => {
         Cookies.remove('token');
         setTimeout(this.setState({logoutYn: true}), 3000);
+    }
+
+    onClickNote = () => {
+        const {setNotes, diaryMonth, setDiaryMonth, setDiaries, setDiaryDt, setDisease, setDiary} = this.props;
+        openPop(<Note />).then(() => {
+            setNotes(null);
+            const month = diaryMonth;
+            setDiaryMonth(null);
+            setDiaryMonth(month);
+            setDiaries(null);
+            setDiaryDt(null);
+            setDisease(null);
+            setDiary(null);
+        });
     }
 
     onClickSet = () => {
@@ -40,7 +59,7 @@ class Gnb extends Component {
                                 My
                             </Dropdown.Toggle>
                             <Dropdown.Menu>
-                                <Dropdown.Item key={1}>일기장</Dropdown.Item>
+                                <Dropdown.Item key={1} onClick={() => this.onClickNote()}>일기장</Dropdown.Item>
                                 <Dropdown.Item key={2} onClick={() => this.onClickSet()}>설정</Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
@@ -79,6 +98,33 @@ const WrapperStyled = styled.div`
     }
 }`;
 
-Gnb.propTypes = {};
+Gnb.propTypes = {
+    diaryMonth: PropTypes.string,
+    setNotes: PropTypes.func,
+    setDiaryMonth: PropTypes.func,
+    setDiaries: PropTypes.func,
+    setDiaryDt: PropTypes.func,
+    setDiary: PropTypes.func,
+    setDisease: PropTypes.func
 
-export default Gnb;
+};
+
+const mapStateToProps = (state) => ({
+    diary: state.note.diary,
+    diaryDt: state.note.diaryDt,
+    diaryMonth: state.note.diaryMonth
+});
+
+const mapDispatchToProps = {
+    setNotes: noteActions.setNotes,
+    setDiaryMonth: noteActions.setDiaryMonth,
+    setDiaries: noteActions.setDiaries,
+    setDiaryDt: noteActions.setDiaryDt,
+    setDiary: noteActions.setDiary,
+    setDisease: noteActions.setDisease
+};
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Gnb);

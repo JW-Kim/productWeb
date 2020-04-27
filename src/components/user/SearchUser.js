@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {Row, Col, Modal} from 'react-bootstrap';
 import styled from 'styled-components';
-import { connect } from 'react-redux';
-import {withRouter} from 'react-router';
+import $ from 'jquery';
 
 import {modalHeader} from '../../assets/styles/set.scss';
 import {myModal} from '../../assets/styles/com.scss';
@@ -11,7 +10,6 @@ import {searchUserRow, searchUserListRow} from '../../assets/styles/user.scss';
 import Edit from '../com/Edit';
 import {UserRest} from '../../apis/index';
 import Avatar from '../com/Avatar';
-import {dialog as DialogActions} from '../../redux/actions/index';
 
 class SearchUser extends Component {
     constructor(props) {
@@ -25,12 +23,12 @@ class SearchUser extends Component {
     }
 
     componentWillMount() {
+        this.promise = new $.Deferred();
     }
 
     onClose = () => {
-        const {close} = this.props;
         this.setState({searchVal: '', userList: []});
-        close();
+        return this.promise.reject();
     }
 
     async onChangeSearchVal(text) {
@@ -40,14 +38,14 @@ class SearchUser extends Component {
             return;
         }
         const res = await UserRest.selectUserList({searchVal: text});
-        this.setState({userList: res.data.data});
+        this.setState({userList: res.data.data, searchVal: text});
     }
 
     selectedUser = (userId, userNm, fileId) => {
         const {setShareUser} = this.props;
 
         setShareUser(userId, userNm, fileId);
-        this.onClose();
+        return this.promise.resolve();
     }
 
     renderUserList = () => {
@@ -70,11 +68,10 @@ class SearchUser extends Component {
     }
 
     render() {
-        const {openYn} = this.props;
         const {searchVal} = this.state;
         return (
             <WrapperStyled>
-                <Modal show={openYn} dialogClassName={myModal}>
+                <Modal show={true} dialogClassName={myModal}>
                     <Modal.Body>
                         <Row className={modalHeader}>
                             <Col xs={12} className={searchUserRow}>
@@ -104,18 +101,10 @@ const WrapperStyled = styled.div`
 
 
 SearchUser.propTypes = {
-    openYn: PropTypes.bool,
     close: PropTypes.func,
-    setShareUser: PropTypes.func,
-    setToast: PropTypes.func
+    setShareUser: PropTypes.func
 };
 
-const mapDispatchToProps = {
-    setToast: DialogActions.setToast
-};
+export default SearchUser;
 
-export default connect(
-    null,
-    mapDispatchToProps
-)(withRouter(SearchUser));
 

@@ -19,16 +19,6 @@ class NoteDtlCfg extends Component {
         this.getNoteCfg();
     }
 
-    componentWillReceiveProps(nextProps) {
-        const {openYn} = this.props;
-
-        if(!openYn && nextProps.openYn) {
-            this.setState({
-                noteCfgList: []
-            }, () => {this.getNoteCfg();});
-        }
-    }
-
     async getNoteCfg() {
         const {type, noteId, setNoteCfgList} = this.props;
 
@@ -120,8 +110,7 @@ const WrapperStyled = styled.div`
 NoteDtlCfg.propTypes = {
     setNoteCfgList: PropTypes.func,
     type: PropTypes.string,
-    noteId: PropTypes.string,
-    openYn: PropTypes.bool
+    noteId: PropTypes.string
 };
 
 export default NoteDtlCfg;

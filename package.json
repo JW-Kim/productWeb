@@ -1,7 +1,7 @@
 {
   "name": "webpack-react-redux",
   "version": "1.0.0",
-  "description": "A boilerplate for playing around with react, redux and react-router with the help of webpack.",
+  "description": "I-Diary",
   "main": "index.js",
   "scripts": {
     "test": "",
@@ -32,6 +32,7 @@
     "react-day-picker": "^7.4.0",
     "react-dom": "^16.8.6",
     "react-hot-loader": "^3.0.0-beta.2",
+    "react-image-file-resizer": "^0.2.1",
     "react-onclickoutside": "^6.9.0",
     "react-redux": "^4.4.5",
     "react-router-dom": "^4.1.1",

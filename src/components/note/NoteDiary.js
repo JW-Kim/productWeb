@@ -99,7 +99,7 @@ class NoteDiary extends Component {
                                 {openYn && (
                                 <Dropdown>
                                     <Dropdown.Toggle id="dropdown-basic">
-                                        <span className="material-icons">more_horiz</span>
+                                        <span className="material-icons" style={{float: 'right', lineHeight: '30px'}}>more_horiz</span>
                                     </Dropdown.Toggle>
                                     <Dropdown.Menu>
                                         <Dropdown.Item key={1} onClick={() => this.updateDiary()}>수정</Dropdown.Item>
@@ -167,6 +167,7 @@ const WrapperStyled = styled.div`
         background-color: #fff;
         display: inline-block;
         width: 80%;
+        border: 0px;
     }
     .card-body {
         font-size: 12px;

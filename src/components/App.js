@@ -8,7 +8,6 @@ import Login from './login/Login';
 import Note from './note/Note';
 import Gnb from './frame/Gnb';
 import UserRegister from './user/UserRegister';
-import Toast from '../components/com/Toast';
 
 class App extends Component {
     constructor(props) {
@@ -31,7 +30,6 @@ class App extends Component {
                     <Route path="/note"><Note/></Route>
                     <Route path="/user_register/:type"><UserRegister/></Route>
                 </Switch>
-                <Toast/>
             </div>
         );
     }

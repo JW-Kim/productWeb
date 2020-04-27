@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { Redirect} from 'react-router-dom';
 import {Button, Container, Row, Col} from 'react-bootstrap';
 import {withRouter} from 'react-router';
@@ -9,7 +8,7 @@ import _ from 'lodash';
 import { inputRow, loginBtn, inputRowTitle, editRow, warningRow } from '../../assets/styles/com.scss';
 import Edit from '../com/Edit';
 import UserRest from '../../apis/UserRest';
-import {dialog as DialogActions} from '../../redux/actions/index';
+import {toast} from '../com/ComSvc';
 
 class UserRegister extends Component {
     constructor(props) {
@@ -42,7 +41,6 @@ class UserRegister extends Component {
     }
 
     async insertUser() {
-        const {setToast} = this.props;
         const {userLoginId, email, userPwd, userPwd2, userNm} = this.state;
 
         if (_.isNil(userLoginId) || _.isNil(email) || _.isNil(userPwd) || _.isNil(userPwd2) || _.isNil(userNm)
@@ -57,20 +55,20 @@ class UserRegister extends Component {
         const res = await UserRest.selectUserExist({userLoginId, email});
         if (res.status === 200) {
             if(res.data.data) {
-                setToast({toastYn: true, toastMsg: '동일한 ID가 존재합니다.'});
+                toast('동일한 ID가 존재합니다.');
                 return;
             }
         } else {
-            setToast({toastYn: true, toastMsg: '조회를 실패하였습니다.'});
+            toast('조회를 실패하였습니다.');
             return;
         }
 
         const res1 = await UserRest.createUser({userLoginId, email, userPwd, userPwd2, userNm});
         if (res1.status === 200) {
-            setToast({toastYn: true, toastMsg: '사용자가 등록되었습니다.'});
+            toast('사용자가 등록되었습니다.');
             this.setState({redirectYn: true});
         } else {
-            setToast({toastYn: true, toastMsg: '등록을 실패하였습니다.'});
+            toast('등록을 실패하였습니다.');
             return;
         }
     }
@@ -215,16 +213,9 @@ class UserRegister extends Component {
 }
 
 UserRegister.propTypes = {
-    match: PropTypes.object,
-    setToast: PropTypes.func
+    match: PropTypes.object
 };
 
-const mapDispatchToProps = {
-    setToast: DialogActions.setToast
-};
+export default withRouter(UserRegister);
 
-export default connect(
-    null,
-    mapDispatchToProps
-)(withRouter(UserRegister));
 

@@ -29,7 +29,6 @@ class NoteDtlInfo extends Component {
     }
 
     onDayClick = (birthDt) => {
-        console.log('onDayClick', birthDt);
         const {setBirthDt} = this.props;
         setBirthDt(birthDt, true);
     }
@@ -48,7 +47,7 @@ class NoteDtlInfo extends Component {
 
     render() {
         const {noteNm, sex, birthDt} = this.props;
-
+        console.log('birthDt', new Date(birthDt));
         return (
             <WrapperStyled>
             <div className={noteInfo}>
@@ -87,9 +86,11 @@ class NoteDtlInfo extends Component {
                         <DatePicker
                             formatDate={(date, format, loclae) => this.formatDate(date, format, loclae)}
                             parseDate={(str, format, locale) => this.parseDate(str, format, locale)}
-                            selectedDays={new Date(birthDt)}
+                            dayPickerProps={{
+                                selectedDays: new Date(birthDt)
+                            }}
                             format="yyyy-MM-dd"
-                            placeholder={`${dateFnsFormat(new Date(), 'yyyy-MM-dd')}`}
+                            placeholder={`${dateFnsFormat(new Date(birthDt), 'yyyy-MM-dd')}`}
                             onDayChange={this.onDayClick}/>
                     </Col>
                 </Row>

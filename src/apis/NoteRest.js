@@ -34,6 +34,22 @@ class NoteRest {
     static updateNote(noteId, params) {
         return $http.post(`${prefix}/${noteId}`, params);
     }
+
+    static getMyNoteList() {
+        return $http.get(`${prefix}/my`);
+    }
+
+    static getShareNoteList() {
+        return $http.get(`${prefix}/share`);
+    }
+
+    static deleteMyNote(noteId) {
+        return $http.delete(`${prefix}/${noteId}`);
+    }
+
+    static deleteShareNote(noteId) {
+        return $http.delete(`${prefix}/share/${noteId}`);
+    }
 }
 
 export default NoteRest;

@@ -19,6 +19,13 @@ class NoteDisease extends Component {
         };
     }
 
+    componentWillReceiveProps(nextProps) {
+        const {diaryDt} = this.props;
+        if(diaryDt !== nextProps.diaryDt) {
+            this.setState({openYn: false});
+        }
+    }
+
     toggle = () => {
         const {openYn} = this.state;
 
@@ -77,7 +84,7 @@ class NoteDisease extends Component {
                     {openYn && (
                         <Dropdown>
                             <Dropdown.Toggle id="dropdown-basic">
-                                <span className="material-icons">more_horiz</span>
+                                <span className="material-icons" style={{float: 'right', lineHeight: '30px'}}>more_horiz</span>
                             </Dropdown.Toggle>
                             <Dropdown.Menu>
                                 <Dropdown.Item key={1} onClick={() => this.updateDisease(item.diseaseId)}>수정</Dropdown.Item>

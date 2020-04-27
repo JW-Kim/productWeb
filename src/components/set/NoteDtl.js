@@ -1,17 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import {Modal, Col, Row, Button} from 'react-bootstrap';
-import {withRouter} from 'react-router';
+import $ from 'jquery';
 
 import ModalHeader from '../com/ModalHeader';
 import {myModal, btn, modalBody} from '../../assets/styles/com.scss';
-
-import {dialog as DialogActions} from '../../redux/actions/index';
 import NoteDtlCfg from './NoteDtlCfg';
 import {NoteRest} from '../../apis/index';
 import NoteDtlInfo from './NoteDtlInfo';
 import NoteDtlShare from './NoteDtlShare';
+import {toast} from '../com/ComSvc';
 
 class NoteDtl extends Component {
     constructor(props) {
@@ -33,32 +31,12 @@ class NoteDtl extends Component {
     }
 
     async componentWillMount() {
+        this.promise = new $.Deferred();
         this.getNote();
     }
 
-    componentWillReceiveProps(nextProps) {
-        const {openYn} = this.props;
-
-        if(!openYn && nextProps.openYn) {
-            this.setState({
-                noteNm: '',
-                isNoteNm: false,
-                sex: 'M',
-                birthDt: null,
-                shareList: [],
-                noteCfgList: [],
-                fileId: null,
-                avatarSource: null,
-                isSex: false,
-                isBirthDt: false,
-                isProfile: false,
-                isNoteCfgList: false
-            }, () => {this.getNote();});
-        }
-    }
-
     async getNote() {
-        const {noteId, type} = this.state;
+        const {noteId, type} = this.props;
         if (type === 'UPDATE') {
             const res = await NoteRest.getNote(noteId);
             const note = res.data.data;
@@ -76,8 +54,7 @@ class NoteDtl extends Component {
     }
 
     onClose = () => {
-        const {close} = this.props;
-        close();
+        return this.promise.reject();
     }
 
     checkBtnStyle() {
@@ -128,8 +105,6 @@ class NoteDtl extends Component {
             day = `0${day}`;
         }
 
-        console.log('onBirthDt', birthDt, isBirthDt, `${year}-${month}-${day}` );
-
         this.setState({birthDt: `${year}-${month}-${day}`, isBirthDt}, () => {
             this.checkBtnStyle();
         });
@@ -146,64 +121,63 @@ class NoteDtl extends Component {
     }
 
     async insertNote() {
-        const {setToast} = this.props;
         const {shareList, fileId, isNoteNm, isBirthDt, noteCfgList, noteNm, sex, birthDt} = this.state;
         console.log('insertNote', shareList, fileId, isNoteNm, isBirthDt, noteCfgList, noteNm, sex, birthDt);
         if(!isNoteNm || !isBirthDt) {
-            setToast({toastYn: true, toastMsg: '노트명과 출생일을 입력해주세요.'});
+            toast('노트명과 출생일을 입력해주세요.');
             return;
         }
 
         const res = await NoteRest.insertNote({noteNm, sex, birthDt, shareList, fileId, noteCfgList});
         if (res.status === 200) {
-            setToast({toastYn: true, toastMsg: '저장되었습니다.'});
+            toast('저장되었습니다.');
         }else {
-            setToast({toastYn: true, toastMsg: '등록을 실패하였습니다.'});
+            toast('등록을 실패하였습니다.');
         }
+        return this.promise.resolve();
     }
 
     async updateNote() {
-        const {setToast, noteId} = this.props;
+        const {noteId} = this.props;
         const {fileId, isNoteNm, isSex, isProfile, isBirthDt, noteCfgList, noteNm, sex, birthDt} = this.state;
 
         if(!(isNoteNm || isBirthDt || isSex || isProfile)) {
-            setToast({toastYn: true, toastMsg: '노트명과 출생일을 입력해주세요.'});
+            toast('노트명과 출생일을 입력해주세요.');
             return;
         }
 
         const res = await NoteRest.updateNote(noteId, {noteNm, sex, birthDt, fileId, noteCfgList});
         if (res.status === 200) {
-            setToast({toastYn: true, toastMsg: '저장되었습니다.'});
+            toast('저장되었습니다.');
         }else {
-            setToast({toastYn: true, toastMsg: '수정을 실패하였습니다.'});
+            toast('수정을 실패하였습니다.');
         }
+        return this.promise.resolve();
     }
 
     render() {
-        const {openYn, type, noteId} = this.props;
-        const {noteNm, sex, btnStyle} = this.state;
+        const {type, noteId} = this.props;
+        const {noteNm, sex, btnStyle, birthDt} = this.state;
 
         return (
             <div>
-                <Modal show={openYn} dialogClassName={myModal}>
+                <Modal show={true} dialogClassName={myModal}>
                     <Modal.Body>
                         <ModalHeader title="노트 작성" type="LEFT" close={() => this.onClose()}/>
                         <div className={modalBody}>
                             <NoteDtlInfo
-                                openYn={openYn}
-                                textVal={noteNm}
+                                noteNm={noteNm}
                                 sex={sex}
+                                birthDt={birthDt}
                                 setNoteNm={(name, isNoteNm) => this.onChangeNoteNm(name, isNoteNm)}
                                 setSex={(val, isSex) => this.onChangeSex(val, isSex)}
-                                setBirthDt={(birthDt, isBirthDt) => this.onBirthDt(birthDt, isBirthDt)}
+                                setBirthDt={(dt, isBirthDt) => this.onBirthDt(dt, isBirthDt)}
                             />
                             <NoteDtlCfg
-                                openYn={openYn}
                                 type={type}
                                 noteId={noteId}
                                 setNoteCfgList={(noteCfgList, isNoteCfgList) => this.setState({noteCfgList, isNoteCfgList})}/>
                             <NoteDtlShare
-                                openYn={openYn}
                                 noteId={noteId}
                                 type={type}
                                 setShareUserList={(shareList, isShareList) => this.setState({shareList, isShareList})}
@@ -218,18 +192,8 @@ class NoteDtl extends Component {
 }
 
 NoteDtl.propTypes = {
-    openYn: PropTypes.bool,
-    close: PropTypes.func,
     type: PropTypes.string,
-    setToast: PropTypes.func,
     noteId: PropTypes.string
 };
 
-const mapDispatchToProps = {
-    setToast: DialogActions.setToast
-};
-
-export default connect(
-    null,
-    mapDispatchToProps
-)(withRouter(NoteDtl));
+export default NoteDtl;

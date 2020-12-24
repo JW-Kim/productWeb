@@ -23,7 +23,7 @@ new WebpackDevServer(webpack(config), {
     },
     proxy: {
         '/product' : {
-            target: 'http://localhost:80'
+            target: 'http://localhost:9080'
         }
     }
 }).listen(9000, 'localhost', function (err) {

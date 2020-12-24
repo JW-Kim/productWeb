@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import {gnbRow, gnbTitle} from '../../assets/styles/gnb.scss';
 import Set from '../set/Set';
 import Note from '../set/Note';
+import Stock from '../stock/stock';
 import {openPop} from '../com/ModalSvc';
 import {note as noteActions} from '../../redux/actions/index';
 
@@ -45,6 +46,10 @@ class Gnb extends Component {
         this.setState({setOpenYn: !setOpenYn});
     }
 
+    onClickStock = () => {
+        openPop(<Stock />);
+    }
+
     render() {
         const {logoutYn, setOpenYn} = this.state;
         return (
@@ -61,6 +66,7 @@ class Gnb extends Component {
                             <Dropdown.Menu>
                                 <Dropdown.Item key={1} onClick={() => this.onClickNote()}>일기장</Dropdown.Item>
                                 <Dropdown.Item key={2} onClick={() => this.onClickSet()}>설정</Dropdown.Item>
+                                <Dropdown.Item key={3} onClick={() => this.onClickStock()}>주식</Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
                     </Col>

@@ -4,6 +4,7 @@ import DownloadRest from './DownloadRest';
 import DiaryRest from './DiaryRest';
 import UserRest from './UserRest';
 import FileRest from './FileRest';
+import StockRest from './StockRest';
 
 export {
     LoginRest,
@@ -11,5 +12,6 @@ export {
     DownloadRest,
     DiaryRest,
     UserRest,
-    FileRest
+    FileRest,
+    StockRest
 };

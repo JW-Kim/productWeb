@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import {gnbRow, gnbTitle} from '../../assets/styles/gnb.scss';
 import Set from '../set/Set';
 import Note from '../set/Note';
-import Stock from '../stock/stock';
+import Stock from '../stock/Stock';
 import {openPop} from '../com/ModalSvc';
 import {note as noteActions} from '../../redux/actions/index';
 

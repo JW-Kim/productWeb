@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Modal, Row, Col, Container, Card, Table} from 'react-bootstrap';
+import {Modal, Row, Col, Container, Card, Table, Button} from 'react-bootstrap';
 import DayPicker from 'react-day-picker';
 import $ from 'jquery';
 
@@ -13,6 +13,9 @@ import StockRest from '../../apis/StockRest';
 import StockCalendarNav from './StockCalendarNav';
 import StockCalendarDay from './StockCalendarDay';
 import styled from 'styled-components';
+import {openPop} from '../com/ModalSvc';
+import StockDtl from './StockDtl';
+import {toast} from '../com/ComSvc';
 
 const MONTHS = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
 const WEEKDAYS_SHORT = ['일', '월', '화', '수', '목', '금', '토'];
@@ -22,7 +25,7 @@ class Stock extends Component {
         super(props);
         this.state = {
             stockList: [],
-            stockDt: getTodayDt()
+            stockDt: new Date(getTodayDt())
         };
     }
 
@@ -228,6 +231,32 @@ class Stock extends Component {
         this.getData();
     }
 
+    openStockDtl = (type, stockId) => {
+        const {stockDt} = this.state;
+        openPop(<StockDtl type={type} stockId={stockId} stockDt={getDt(stockDt)} close={() => this.onCloseStockDtl()} />).then(() => {
+            this.getStockList(stockDt);
+            this.getData();
+        });
+    }
+
+    onCloseStockDtl = () => {
+        const {stockDt} = this.state;
+        this.getStockList(stockDt);
+        this.getData();
+    }
+
+    async deleteStock(stockId) {
+        const {stockDt} = this.state;
+        const res = await StockRest.deleteStock(stockId);
+        if (res.status === 200) {
+            toast('저장되었습니다.');
+            this.getStockList(stockDt);
+            this.getData();
+        }else {
+            toast('등록을 실패하였습니다.');
+        }
+    }
+
     renderDay = (day) => {
         return (
             <StockCalendarDay day={day} />
@@ -240,7 +269,11 @@ class Stock extends Component {
         const items = stockList.map((item) => (
             <Card className={card}>
                 <Card.Body>
-                    <Card.Title>{item.companyNm}</Card.Title>
+                    <Card.Title>
+                        {item.companyNm}
+                        <Button onClick={() => this.openStockDtl('UPDATE', item.stockId)}>수정</Button>
+                        <Button onClick={() => this.deleteStock(item.stockId)}>삭제</Button>
+                    </Card.Title>
                     <Card.Text>
                         <Table striped bordered hover size="sm">
                             <tbody>
@@ -306,7 +339,7 @@ class Stock extends Component {
                                 </WrapperStyled>
                                 <div className={noteList}>
                                     <Row>
-                                        <Col xs={2}>
+                                        <Col xs={2} onClick={() => this.openStockDtl('CREATE')}>
                                             <span className="material-icons" style={{'color': '#4caf50', 'fontSize': '20px'}}>add_circle</span>
                                         </Col>
                                         <Col xs={10} />
